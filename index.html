@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Senaryotopia</title>
+<title>Scenariotopia</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
@@ -17,10 +17,10 @@
     --ink-faint:#B8B8BD;
     --line:#E5E7EB;
     --line-soft:#EFEFF1;
-    --accent:#F59E0B;
-    --accent-2:#FFD23F;
-    --accent-ink:#7A4A05;
-    --accent-wash:#FFF7E8;
+    --accent:#0A66C2;
+    --accent-2:#2F8AE0;
+    --accent-ink:#0A4A8F;
+    --accent-wash:#EEF4FB;
     --paper:#FFFFFF;
   }
   *{-webkit-tap-highlight-color:transparent;}
@@ -132,10 +132,10 @@ function PrimaryButton(props){
   var size = props.size==='lg' ? 'px-7 py-3.5 text-[15px]' : 'px-5 py-2.5 text-[14px]';
   return e('button',{
     onClick:props.onClick, type:props.type||'button',
-    className: cx('group inline-flex items-center justify-center gap-2 rounded-full font-semibold text-[var(--ink)]',
-      'bg-gradient-to-b from-[var(--accent-2)] to-[var(--accent)]',
-      'shadow-[0_1px_0_rgba(255,255,255,.6)_inset,0_10px_24px_-8px_rgba(245,158,11,.55)]',
-      'hover:shadow-[0_1px_0_rgba(255,255,255,.6)_inset,0_14px_30px_-8px_rgba(245,158,11,.7)] hover:-translate-y-[1px]',
+    className: cx('group inline-flex items-center justify-center gap-2 rounded-full font-semibold text-white',
+      'bg-[var(--accent)]',
+      'shadow-[0_10px_24px_-10px_rgba(10,102,194,.55)]',
+      'hover:bg-[var(--accent-ink)] hover:shadow-[0_14px_30px_-10px_rgba(10,102,194,.6)] hover:-translate-y-[1px]',
       'active:translate-y-0 transition-all duration-200', size, props.className)
   }, props.children);
 }
@@ -197,7 +197,7 @@ function Modal(props){
 function Logo(props){
   var size = props.size||'text-[19px]';
   return e('span',{className:cx('inline-flex items-baseline gap-[1px] font-extrabold tracking-[-.01em] select-none', size)},
-    e('span',{className:'text-[var(--ink)]'},'Senaryo'),
+    e('span',{className:'text-[var(--ink)]'},'Scenario'),
     e('span',{className:'font-normal text-[var(--ink-soft)]'},'topia')
   );
 }
@@ -258,21 +258,45 @@ function MiniIllustration(props){
   );
 }
 
-function LandingPage(props){
-  var navLinks = [['Akademi','#akademi'],['Özellikler','#ozellikler'],['Fiyatlandırma','#fiyat']];
-  return e('div',{className:'min-h-screen bg-[var(--bg)]'},
-    e('header',{className:'sticky top-0 z-40 glass border-b border-[var(--line-soft)]'},
-      e('div',{className:'max-w-[1120px] mx-auto px-6 sm:px-8 h-16 flex items-center justify-between'},
-        e(Logo,null),
-        e('nav',{className:'hidden md:flex items-center gap-8'}, navLinks.map(function(n){
-          return e('a',{key:n[0], href:n[1], className:'text-[14px] font-medium text-[var(--ink)]/70 hover:text-[var(--ink)] transition-colors'}, n[0]);
-        })),
-        e('div',{className:'flex items-center gap-2 sm:gap-4'},
-          e(TextButton,{onClick:function(){props.onAuth('login');}},'Giriş Yap'),
-          e(PrimaryButton,{onClick:function(){props.onAuth('signup');}, className:'!px-5 !py-2 !text-[13px]'},'Kaydol')
-        )
+var FEATURE_HIGHLIGHTS = [
+  {icon:IconMapPin, title:'Her Yerde Yaz', desc:'Evde, otobüste ya da sette — yazdığın an kaydolur, kaldığın yerden devam edersin.'},
+  {icon:IconUsers, title:'Karakter Matrisi', desc:'Her karakterin İstek (Want) ve İhtiyaç (Need) alanlarını tek bakışta düzenle.'},
+  {icon:IconLayers, title:'Dramatik Yapı', desc:'"Save the Cat!" şablonuyla olay örgünü sağlam temellere oturt.'}
+];
+
+var SITE_NAV_LINKS = [['Akademi','akademi'],['Özellikler','ozellikler'],['Fiyatlandırma','fiyat']];
+
+function SiteHeader(props){
+  return e('header',{className:'sticky top-0 z-40 glass border-b border-[var(--line-soft)]'},
+    e('div',{className:'max-w-[1120px] mx-auto px-6 sm:px-8 h-16 flex items-center justify-between'},
+      e('button',{onClick:props.onLogo, 'aria-label':'Anasayfa', className:'inline-flex'}, e(Logo,null)),
+      e('nav',{className:'hidden md:flex items-center gap-8'}, SITE_NAV_LINKS.map(function(n){
+        var isActive = props.activeSection===n[1];
+        return e('button',{key:n[1], onClick:function(){props.onNav(n[1]);},
+          className: cx('text-[14px] font-medium transition-colors',
+            isActive ? 'text-[var(--ink)]' : 'text-[var(--ink)]/70 hover:text-[var(--ink)]')
+        }, n[0]);
+      })),
+      e('div',{className:'flex items-center gap-2 sm:gap-4'},
+        e(TextButton,{onClick:function(){props.onAuth('login');}},'Giriş Yap'),
+        e(PrimaryButton,{onClick:function(){props.onAuth('signup');}, className:'!px-5 !py-2 !text-[13px]'},'Kaydol')
       )
-    ),
+    )
+  );
+}
+
+function SiteFooter(){
+  return e('footer',{className:'border-t border-[var(--line-soft)]'},
+    e('div',{className:'max-w-[1120px] mx-auto px-6 sm:px-8 py-10 flex flex-col sm:flex-row items-center justify-between gap-4'},
+      e(Logo,{size:'text-[15px]'}),
+      e('p',{className:'text-[13px] text-[var(--ink-faint)] flex items-center gap-1.5'},'Yazarlar için, ',e(IconHeart,{size:12,className:'text-[var(--accent)]'}),' ile.')
+    )
+  );
+}
+
+function LandingPage(props){
+  return e('div',{className:'min-h-screen bg-[var(--bg)]'},
+    e(SiteHeader,{onLogo:props.onLogo, onNav:props.onNav, onAuth:props.onAuth, activeSection:null}),
 
     e('section',{className:'relative pt-16 sm:pt-24 pb-10 overflow-hidden'},
       e('div',{className:'max-w-[1120px] mx-auto px-6 sm:px-8 text-center'},
@@ -293,27 +317,29 @@ function LandingPage(props){
       e('div',{className:'reveal mt-16 sm:mt-20 px-6', style:{animationDelay:'.25s'}}, e(DeviceMock,null))
     ),
 
-    e('section',{id:'ozellikler', className:'max-w-[1120px] mx-auto px-6 sm:px-8'},
-      e(FeatureRow,{
-        kicker:'Her yerde', title:'İstediğin Yerde Yaz.',
-        desc:'Evde, otobüste, metroda ya da sette beklerken — senaryon her an parmaklarının ucunda. Yazdığın an kaydolur, kaldığın yerden devam edersin.',
-        visual: e(MiniIllustration,{icon:IconMapPin})
-      }),
-      e(FeatureRow,{
-        reverse:true, kicker:'Karakter matrisi', title:'Karakterlerini Düzenle.',
-        desc:'Karakterlerinin amacını (Want), içsel ihtiyacını (Need) ve karmaşık ilişki ağlarını tek bir bakışta cebine sığdır.',
-        visual: e(MiniIllustration,{icon:IconUsers})
-      }),
-      e(FeatureRow,{
-        kicker:'Dramatik yapı', title:'Dramatik Yapını Kur.',
-        desc:'"Save the Cat!" ve Kahramanın Yolculuğu şablonlarıyla olay örgünü sağlam temellere oturt, hiçbir beat’i kaçırma.',
-        visual: e(MiniIllustration,{icon:IconLayers})
-      })
+    e('section',{className:'max-w-[1120px] mx-auto px-6 sm:px-8 py-16 md:py-20 border-t border-[var(--line-soft)]'},
+      e('div',{className:'flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-10'},
+        e('div',null,
+          e(Kicker,null,'Neler sunuyoruz'),
+          e('h3',{className:'mt-4 text-[28px] sm:text-[34px] font-bold tracking-[-.02em] text-[var(--ink)] balance'}, 'Yazma sürecinin her adımı için.')
+        ),
+        e(TextButton,{onClick:function(){props.onNav('ozellikler');}, className:'inline-flex items-center gap-1.5 shrink-0'},'Tüm özellikleri incele', e(IconArrowRight,{size:14}))
+      ),
+      e('div',{className:'grid sm:grid-cols-3 gap-5'},
+        FEATURE_HIGHLIGHTS.map(function(f,i){
+          return e('button',{key:i, onClick:function(){props.onNav('ozellikler');},
+            className:'text-left rounded-[22px] border border-[var(--line)] bg-white p-7 hover:-translate-y-[2px] hover:border-[var(--ink)]/20 hover:shadow-[0_18px_38px_-20px_rgba(29,29,31,.25)] transition-all duration-200'},
+            e('div',{className:'w-10 h-10 rounded-xl bg-[var(--accent-wash)] text-[var(--accent-ink)] flex items-center justify-center mb-5'}, e(f.icon,{size:19})),
+            e('div',{className:'text-[16px] font-bold tracking-[-.01em] text-[var(--ink)]'}, f.title),
+            e('p',{className:'mt-1.5 text-[13.5px] leading-relaxed text-[var(--ink-soft)]'}, f.desc)
+          );
+        })
+      )
     ),
 
     e('section',{id:'akademi', className:'border-t border-[var(--line-soft)] mt-6'},
       e('div',{className:'max-w-[1120px] mx-auto px-6 sm:px-8 py-20 text-center'},
-        e(Kicker,null,'Senaryotopia Akademi'),
+        e(Kicker,null,'Scenariotopia Akademi'),
         e('h3',{className:'mt-4 text-[26px] sm:text-[32px] font-bold tracking-[-.02em] balance max-w-[600px] mx-auto'},'Yazarken öğren, öğrenirken yaz.'),
         e('p',{className:'mt-4 text-[15.5px] text-[var(--ink-soft)] max-w-[520px] mx-auto leading-relaxed'},'Kısa dersler ve gerçek senaryo örnekleriyle zanaatını geliştir. Kaydolan her yazar Akademi’ye erişebilir.')
       )
@@ -342,12 +368,77 @@ function LandingPage(props){
       )
     ),
 
-    e('footer',{className:'border-t border-[var(--line-soft)]'},
-      e('div',{className:'max-w-[1120px] mx-auto px-6 sm:px-8 py-10 flex flex-col sm:flex-row items-center justify-between gap-4'},
-        e(Logo,{size:'text-[15px]'}),
-        e('p',{className:'text-[13px] text-[var(--ink-faint)] flex items-center gap-1.5'},'Yazarlar için, ',e(IconHeart,{size:12,className:'text-[var(--accent)]'}),' ile.')
+    e(SiteFooter,null)
+  );
+}
+
+/* ---------------------------------------------------------------- */
+/* FEATURES PAGE                                                     */
+/* ---------------------------------------------------------------- */
+var FEATURE_DETAILS = [
+  {
+    kicker:'Her yerde', title:'İstediğin Yerde Yaz.',
+    desc:'Evde, otobüste, metroda ya da sette beklerken — senaryon her an parmaklarının ucunda. Yazdığın an kaydolur, kaldığın yerden devam edersin.',
+    icon:IconMapPin
+  },
+  {
+    reverse:true, kicker:'Karakter matrisi', title:'Karakterlerini Düzenle.',
+    desc:'Karakterlerinin amacını (Want), içsel ihtiyacını (Need) ve karmaşık ilişki ağlarını tek bir bakışta cebine sığdır.',
+    icon:IconUsers
+  },
+  {
+    kicker:'Dramatik yapı', title:'Dramatik Yapını Kur.',
+    desc:'"Save the Cat!" ve Kahramanın Yolculuğu şablonlarıyla olay örgünü sağlam temellere oturt, hiçbir beat’i kaçırma.',
+    icon:IconLayers
+  },
+  {
+    reverse:true, kicker:'Kolay biçimlendirme', title:'Blok Tabanlı Editör.',
+    desc:'Sahne, Eylem, Karakter, Diyalog ve Parantez bloklarıyla gerçek sektör standardına uygun yaz — format kurallarıyla uğraşma.',
+    icon:IconFileText
+  },
+  {
+    kicker:'Fikir sandığı', title:'Hiçbir Fikri Kaçırma.',
+    desc:'Aklına gelen bir diyalog ya da sahne fikrini anında not al, dashboard’unda seni bekliyor olsun.',
+    icon:IconNote
+  }
+];
+
+function FeaturesPage(props){
+  return e('div',{className:'min-h-screen bg-[var(--bg)]'},
+    e(SiteHeader,{onLogo:props.onLogo, onNav:props.onNav, onAuth:props.onAuth, activeSection:'ozellikler'}),
+
+    e('section',{className:'pt-16 sm:pt-20 pb-8'},
+      e('div',{className:'max-w-[1120px] mx-auto px-6 sm:px-8 text-center'},
+        e('div',{className:'reveal'}, e(Kicker,null,'Özellikler')),
+        e('h1',{className:'reveal balance mt-5 text-[36px] sm:text-[52px] font-extrabold tracking-[-.03em] leading-[1.05] text-[var(--ink)]', style:{animationDelay:'.05s'}},
+          'Yazma sürecinin', e('br'), 'her adımı için bir araç.'
+        ),
+        e('p',{className:'reveal balance mt-6 text-[16px] sm:text-[18px] text-[var(--ink-soft)] max-w-[560px] mx-auto leading-relaxed', style:{animationDelay:'.1s'}},
+          'Scenariotopia, fikirden final taslağa kadar tüm süreci cebine sığdırır.'
+        )
       )
-    )
+    ),
+
+    e('section',{className:'max-w-[1120px] mx-auto px-6 sm:px-8'},
+      FEATURE_DETAILS.map(function(f,i){
+        return e(FeatureRow,{
+          key:i, reverse:f.reverse, kicker:f.kicker, title:f.title, desc:f.desc,
+          visual: e(MiniIllustration,{icon:f.icon})
+        });
+      })
+    ),
+
+    e('section',{className:'border-t border-[var(--line-soft)]'},
+      e('div',{className:'max-w-[1120px] mx-auto px-6 sm:px-8 py-20 text-center'},
+        e('h3',{className:'text-[26px] sm:text-[32px] font-bold tracking-[-.02em] balance max-w-[560px] mx-auto'},'Yazmaya bugün başla.'),
+        e('p',{className:'mt-4 text-[15.5px] text-[var(--ink-soft)] max-w-[480px] mx-auto leading-relaxed'},'Kayıt olmadan deneyin, istediğinizde ücretsiz hesap açın.'),
+        e('div',{className:'mt-8 flex items-center justify-center gap-3'},
+          e(PrimaryButton,{size:'lg', onClick:props.onStartWriting},'Hemen Yazmaya Başla', e(IconArrowRight,{size:17}))
+        )
+      )
+    ),
+
+    e(SiteFooter,null)
   );
 }
 
@@ -985,6 +1076,25 @@ function App(){
   var dg = useState(null), dailyGoal = dg[0], setDailyGoal = dg[1];
   var npm = useState(false), showNewProject = npm[0], setShowNewProject = npm[1];
   var am = useState({open:false}), authModal = am[0], setAuthModal = am[1];
+  var pa = useState(null), pendingAnchor = pa[0], setPendingAnchor = pa[1];
+
+  function goToLanding(){ setView('landing'); }
+  function navigateSection(key){
+    if(key==='ozellikler'){ setView('features'); return; }
+    if(view!=='landing'){ setPendingAnchor(key); setView('landing'); return; }
+    var el = document.getElementById(key);
+    if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
+  }
+  useEffect(function(){
+    if(view==='landing' && pendingAnchor){
+      var key = pendingAnchor;
+      setPendingAnchor(null);
+      requestAnimationFrame(function(){
+        var el = document.getElementById(key);
+        if(el) el.scrollIntoView({block:'start'});
+      });
+    }
+  },[view, pendingAnchor]);
 
   function openAuth(mode, reason, intent){ setAuthModal({open:true, mode:mode, reason:reason||null, intent:intent||'header'}); }
   function closeAuth(){ setAuthModal({open:false}); }
@@ -1020,7 +1130,16 @@ function App(){
   return e(React.Fragment, null,
     view==='landing' ? e(LandingPage,{
       onAuth:function(mode){ openAuth(mode, null, 'header'); },
-      onStartWriting: openNewProject
+      onStartWriting: openNewProject,
+      onLogo: goToLanding,
+      onNav: navigateSection
+    }) : null,
+
+    view==='features' ? e(FeaturesPage,{
+      onAuth:function(mode){ openAuth(mode, null, 'header'); },
+      onStartWriting: openNewProject,
+      onLogo: goToLanding,
+      onNav: navigateSection
     }) : null,
 
     view==='dashboard' ? e(Dashboard,{
