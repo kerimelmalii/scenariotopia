@@ -1,0 +1,1058 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Senaryotopia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  :root{
+    --bg:#FFFFFF;
+    --bg-alt:#FBFBFD;
+    --ink:#1D1D1F;
+    --ink-soft:#86868B;
+    --ink-faint:#B8B8BD;
+    --line:#E5E7EB;
+    --line-soft:#EFEFF1;
+    --accent:#F59E0B;
+    --accent-2:#FFD23F;
+    --accent-ink:#7A4A05;
+    --accent-wash:#FFF7E8;
+    --paper:#FFFFFF;
+  }
+  *{-webkit-tap-highlight-color:transparent;}
+  html{background:var(--bg);}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Inter',-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',sans-serif;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+    overflow-x:hidden;
+  }
+  .font-mono-script{font-family:'Courier Prime',ui-monospace,'SFMono-Regular',Menlo,Consolas,monospace;}
+  h1,h2,h3,.balance{text-wrap:balance;}
+  ::selection{background:var(--accent-2);color:var(--ink);}
+  a:focus-visible,button:focus-visible,[tabindex]:focus-visible,[contenteditable]:focus-visible{
+    outline:2px solid var(--accent);outline-offset:2px;border-radius:4px;
+  }
+  ::-webkit-scrollbar{width:10px;height:10px;}
+  ::-webkit-scrollbar-thumb{background:var(--line);border-radius:99px;border:2px solid var(--bg);}
+  ::-webkit-scrollbar-track{background:transparent;}
+  .no-scrollbar::-webkit-scrollbar{display:none;}
+  .no-scrollbar{-ms-overflow-style:none;scrollbar-width:none;}
+
+  @keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+  .reveal{animation:fadeUp .7s cubic-bezier(.16,1,.3,1) both;}
+  @media (prefers-reduced-motion:reduce){.reveal{animation:none;}}
+
+  .glass{background:rgba(255,255,255,.78);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);}
+
+  /* screenplay page */
+  .script-page{background:var(--paper);}
+  .block-scene{font-weight:700;text-transform:uppercase;letter-spacing:.02em;margin:1.75em 0 .6em;}
+  .block-action{margin:0 0 .9em;}
+  .block-character{text-transform:uppercase;margin:1.1em 0 0;padding-left:38%;}
+  .block-parenthetical{margin:0 0 0;padding-left:30%;padding-right:18%;font-style:italic;color:var(--ink-soft);}
+  .block-dialogue{margin:0 0 .9em;padding-left:20%;padding-right:20%;}
+  [contenteditable]{outline:none;caret-color:var(--accent-ink);}
+  [contenteditable]:empty:before{content:attr(data-placeholder);color:var(--ink-faint);}
+  .block-wrap{position:relative;border-radius:4px;transition:background-color .12s ease;}
+  .block-wrap:hover{background-color:#FAFAFA;}
+  .block-wrap.is-active{background-color:var(--accent-wash);}
+
+  @media screen{
+    #print-script{display:none;}
+  }
+  @media print{
+    body *{visibility:hidden;}
+    #print-script,#print-script *{visibility:visible;}
+    #print-script{display:block;position:absolute;left:0;top:0;width:100%;padding:1in;font-size:12pt;}
+  }
+</style>
+</head>
+<body>
+
+<div id="root"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+<script>
+(function(){
+"use strict";
+var e = React.createElement;
+var useState = React.useState, useEffect = React.useEffect, useRef = React.useRef, useMemo = React.useMemo;
+
+/* ---------------------------------------------------------------- */
+/* ICONS                                                             */
+/* ---------------------------------------------------------------- */
+function IconBase(props, children){
+  return e('svg', {
+    width: props.size||20, height: props.size||20, viewBox:'0 0 24 24',
+    fill:'none', stroke:'currentColor', strokeWidth: props.strokeWidth||1.75,
+    strokeLinecap:'round', strokeLinejoin:'round',
+    className: props.className||'', style:{flexShrink:0}
+  }, children);
+}
+function IconArrowRight(p){ return IconBase(p,[e('path',{key:1,d:'M5 12h14'}),e('path',{key:2,d:'M13 6l6 6-6 6'})]); }
+function IconChevronLeft(p){ return IconBase(p,[e('path',{key:1,d:'M15 6l-6 6 6 6'})]); }
+function IconChevronRight(p){ return IconBase(p,[e('path',{key:1,d:'M9 6l6 6-6 6'})]); }
+function IconX(p){ return IconBase(p,[e('path',{key:1,d:'M18 6L6 18'}),e('path',{key:2,d:'M6 6l12 12'})]); }
+function IconCheck(p){ return IconBase(p,[e('path',{key:1,d:'M20 6L9 17l-5-5'})]); }
+function IconPlus(p){ return IconBase(p,[e('path',{key:1,d:'M12 5v14'}),e('path',{key:2,d:'M5 12h14'})]); }
+function IconLock(p){ return IconBase(p,[e('rect',{key:1,x:4,y:11,width:16,height:9,rx:2}),e('path',{key:2,d:'M8 11V7a4 4 0 018 0v4'})]); }
+function IconDownload(p){ return IconBase(p,[e('path',{key:1,d:'M12 3v12'}),e('path',{key:2,d:'M7 10l5 5 5-5'}),e('path',{key:3,d:'M5 21h14'})]); }
+function IconPencil(p){ return IconBase(p,[e('path',{key:1,d:'M12 20h9'}),e('path',{key:2,d:'M16.5 3.5a2.12 2.12 0 013 3L7 19l-4 1 1-4L16.5 3.5z'})]); }
+function IconMapPin(p){ return IconBase(p,[e('path',{key:1,d:'M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0116 0z'}),e('circle',{key:2,cx:12,cy:10,r:3})]); }
+function IconUsers(p){ return IconBase(p,[e('path',{key:1,d:'M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2'}),e('circle',{key:2,cx:9,cy:7,r:4}),e('path',{key:3,d:'M22 21v-2a4 4 0 00-3-3.87'}),e('path',{key:4,d:'M16 3.13a4 4 0 010 7.75'})]); }
+function IconLayers(p){ return IconBase(p,[e('path',{key:1,d:'M12 2 2 7l10 5 10-5-10-5z'}),e('path',{key:2,d:'M2 17l10 5 10-5'}),e('path',{key:3,d:'M2 12l10 5 10-5'})]); }
+function IconFileText(p){ return IconBase(p,[e('path',{key:1,d:'M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z'}),e('path',{key:2,d:'M14 2v6h6'}),e('path',{key:3,d:'M8 13h8'}),e('path',{key:4,d:'M8 17h8'}),e('path',{key:5,d:'M8 9h2'})]); }
+function IconNote(p){ return IconBase(p,[e('path',{key:1,d:'M4 4h13l3 3v13H4z'}),e('path',{key:2,d:'M17 4v3h3'}),e('path',{key:3,d:'M8 12h8'}),e('path',{key:4,d:'M8 16h5'})]); }
+function IconClock(p){ return IconBase(p,[e('circle',{key:1,cx:12,cy:12,r:9}),e('path',{key:2,d:'M12 7v5l3 3'})]); }
+function IconTarget(p){ return IconBase(p,[e('circle',{key:1,cx:12,cy:12,r:9}),e('circle',{key:2,cx:12,cy:12,r:5}),e('circle',{key:3,cx:12,cy:12,r:1})]); }
+function IconLogIn(p){ return IconBase(p,[e('path',{key:1,d:'M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4'}),e('path',{key:2,d:'M10 17l5-5-5-5'}),e('path',{key:3,d:'M15 12H3'})]); }
+function IconSparkleWrite(p){ return IconBase(p,[e('path',{key:1,d:'M12 3v4'}),e('path',{key:2,d:'M12 17v4'}),e('path',{key:3,d:'M3 12h4'}),e('path',{key:4,d:'M17 12h4'}),e('circle',{key:5,cx:12,cy:12,r:3})]); }
+function IconHeart(p){ return IconBase(p,[e('path',{key:1,d:'M12 21s-7.2-4.6-9.6-9A5.5 5.5 0 0112 5.5 5.5 5.5 0 0121.6 12c-2.4 4.4-9.6 9-9.6 9z'})]); }
+function IconAperture(p){ return IconBase(p,[e('circle',{key:1,cx:12,cy:12,r:9}),e('path',{key:2,d:'M14.31 8l3.28 5.68'}),e('path',{key:3,d:'M9.69 8h6.62'}),e('path',{key:4,d:'M7.38 12l3.28-5.68'}),e('path',{key:5,d:'M9.69 16L6.41 10.32'}),e('path',{key:6,d:'M14.31 16H7.69'}),e('path',{key:7,d:'M16.62 12l-3.28 5.68'})]); }
+
+/* ---------------------------------------------------------------- */
+/* PRIMITIVES                                                        */
+/* ---------------------------------------------------------------- */
+function cx(){ return Array.prototype.slice.call(arguments).filter(Boolean).join(' '); }
+
+function Kicker(props){
+  return e('span',{className:'inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[.14em] text-[var(--accent-ink)]'},
+    e('span',{className:'w-3 h-px bg-[var(--accent)]'}), props.children);
+}
+
+function PrimaryButton(props){
+  var size = props.size==='lg' ? 'px-7 py-3.5 text-[15px]' : 'px-5 py-2.5 text-[14px]';
+  return e('button',{
+    onClick:props.onClick, type:props.type||'button',
+    className: cx('group inline-flex items-center justify-center gap-2 rounded-full font-semibold text-[var(--ink)]',
+      'bg-gradient-to-b from-[var(--accent-2)] to-[var(--accent)]',
+      'shadow-[0_1px_0_rgba(255,255,255,.6)_inset,0_10px_24px_-8px_rgba(245,158,11,.55)]',
+      'hover:shadow-[0_1px_0_rgba(255,255,255,.6)_inset,0_14px_30px_-8px_rgba(245,158,11,.7)] hover:-translate-y-[1px]',
+      'active:translate-y-0 transition-all duration-200', size, props.className)
+  }, props.children);
+}
+function GhostButton(props){
+  return e('button',{
+    onClick:props.onClick, type:props.type||'button',
+    className: cx('inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-[14px] font-medium text-[var(--ink)]',
+      'border border-[var(--line)] bg-white hover:border-[var(--ink)]/30 hover:bg-[var(--bg-alt)] transition-colors duration-150', props.className)
+  }, props.children);
+}
+function TextButton(props){
+  return e('button',{
+    onClick:props.onClick, type:props.type||'button',
+    className: cx('text-[14px] font-medium text-[var(--ink)]/80 hover:text-[var(--ink)] transition-colors', props.className)
+  }, props.children);
+}
+
+function TextField(props){
+  return e('label',{className:'block'},
+    e('span',{className:'block text-[12px] font-semibold uppercase tracking-[.08em] text-[var(--ink-soft)] mb-1.5'}, props.label),
+    e('input',{
+      type:props.type||'text', value:props.value, onChange:function(ev){props.onChange(ev.target.value);},
+      placeholder:props.placeholder, required:props.required,
+      className:'w-full rounded-xl border border-[var(--line)] bg-[var(--bg-alt)] px-4 py-3 text-[15px] text-[var(--ink)] placeholder:text-[var(--ink-faint)] outline-none focus:border-[var(--accent)] focus:bg-white focus:ring-4 focus:ring-[var(--accent)]/10 transition-all'
+    })
+  );
+}
+function SelectField(props){
+  return e('label',{className:'block'},
+    e('span',{className:'block text-[12px] font-semibold uppercase tracking-[.08em] text-[var(--ink-soft)] mb-1.5'}, props.label),
+    e('div',{className:'relative'},
+      e('select',{
+        value:props.value, onChange:function(ev){props.onChange(ev.target.value);},
+        className:'w-full appearance-none rounded-xl border border-[var(--line)] bg-[var(--bg-alt)] px-4 py-3 text-[15px] text-[var(--ink)] outline-none focus:border-[var(--accent)] focus:bg-white focus:ring-4 focus:ring-[var(--accent)]/10 transition-all'
+      }, props.options.map(function(o){ return e('option',{key:o,value:o},o); })),
+      e('div',{className:'pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[var(--ink-soft)]'}, e(IconChevronRight,{size:14,className:'rotate-90'}))
+    )
+  );
+}
+
+function Modal(props){
+  useEffect(function(){
+    function onKey(ev){ if(ev.key==='Escape') props.onClose(); }
+    window.addEventListener('keydown',onKey);
+    return function(){ window.removeEventListener('keydown',onKey); };
+  },[]);
+  return e('div',{className:'fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6'},
+    e('div',{className:'absolute inset-0 bg-[var(--ink)]/30 backdrop-blur-sm reveal', style:{animationDuration:'.25s'}, onClick:props.onClose}),
+    e('div',{className:cx('relative w-full reveal bg-white rounded-[26px] border border-[var(--line)] shadow-[0_30px_80px_-20px_rgba(29,29,31,.35)] p-7 sm:p-9', props.maxWidth||'max-w-[440px]'), style:{animationDuration:'.35s'}},
+      e('button',{onClick:props.onClose, 'aria-label':'Kapat', className:'absolute right-5 top-5 w-8 h-8 rounded-full flex items-center justify-center text-[var(--ink-soft)] hover:text-[var(--ink)] hover:bg-[var(--bg-alt)] transition-colors'}, e(IconX,{size:16})),
+      props.children
+    )
+  );
+}
+
+/* ---------------------------------------------------------------- */
+/* SHARED: HEADER LOGO                                               */
+/* ---------------------------------------------------------------- */
+function Logo(props){
+  var size = props.size||'text-[19px]';
+  return e('span',{className:cx('inline-flex items-baseline gap-[1px] font-extrabold tracking-[-.01em] select-none', size)},
+    e('span',{className:'text-[var(--ink)]'},'Senaryo'),
+    e('span',{className:'font-normal text-[var(--ink-soft)]'},'topia')
+  );
+}
+
+/* ---------------------------------------------------------------- */
+/* LANDING PAGE                                                      */
+/* ---------------------------------------------------------------- */
+function DeviceMock(){
+  var lines = [
+    {t:'scene', v:'1. İÇ. AHŞAP EV - GECE'},
+    {t:'action', v:'Pencereden sızan mehtap ışığı tozlu döşemede ince bir çizgi çizer.'},
+    {t:'character', v:'ELİF'},
+    {t:'dialogue', v:'Burada biri var mı?'}
+  ];
+  function renderLine(l,i){
+    if(l.t==='scene') return e('div',{key:i,className:'font-bold text-[11px] tracking-wide mb-2 mt-3'}, l.v);
+    if(l.t==='character') return e('div',{key:i,className:'text-[10px] pl-10 mt-2'}, l.v);
+    if(l.t==='dialogue') return e('div',{key:i,className:'text-[10px] pl-6 pr-8 text-[var(--ink)]/80'}, l.v);
+    return e('div',{key:i,className:'text-[10px] text-[var(--ink)]/70 leading-relaxed mb-1'}, l.v);
+  }
+  return e('div',{className:'relative mx-auto w-full max-w-[520px]'},
+    e('div',{className:'absolute -inset-16 -z-10 rounded-full opacity-70', style:{background:'radial-gradient(closest-side, var(--accent-2), transparent 70%)', filter:'blur(40px)'}}),
+    e('div',{className:'relative rounded-[38px] border border-[var(--line)] bg-white shadow-[0_50px_100px_-30px_rgba(29,29,31,.35)] p-3'},
+      e('div',{className:'rounded-[28px] border border-[var(--line-soft)] bg-[var(--bg-alt)] overflow-hidden'},
+        e('div',{className:'flex items-center justify-between px-5 pt-4 pb-2'},
+          e('div',{className:'flex items-center gap-1.5'}, [1,2,3].map(function(k){return e('span',{key:k,className:'w-2 h-2 rounded-full bg-[var(--ink)]/10'});})),
+          e('span',{className:'text-[9px] uppercase tracking-widest text-[var(--ink-faint)]'},'Kayıp Yolcu')
+        ),
+        e('div',{className:'mx-4 mb-4 rounded-2xl bg-white border border-[var(--line-soft)] p-5 font-mono-script shadow-sm'},
+          lines.map(renderLine)
+        )
+      )
+    ),
+    e('div',{className:'absolute -right-6 -bottom-8 w-40 rounded-[22px] border border-[var(--line)] bg-white shadow-[0_30px_60px_-20px_rgba(29,29,31,.3)] p-3 hidden sm:block reveal', style:{animationDelay:'.25s'}},
+      e('div',{className:'flex items-center gap-2 mb-2'}, e('span',{className:'w-6 h-6 rounded-full bg-[var(--accent-wash)] flex items-center justify-center text-[var(--accent-ink)]'}, e(IconTarget,{size:12})), e('span',{className:'text-[9px] font-semibold text-[var(--ink-soft)] uppercase tracking-wide'},'Bugünkü Hedef')),
+      e('div',{className:'text-[11px] text-[var(--ink)] font-semibold'},'4 / 5 sayfa'),
+      e('div',{className:'mt-2 h-1.5 rounded-full bg-[var(--line-soft)] overflow-hidden'}, e('div',{className:'h-full rounded-full bg-gradient-to-r from-[var(--accent-2)] to-[var(--accent)]', style:{width:'80%'}}))
+    )
+  );
+}
+
+function FeatureRow(props){
+  var reverse = props.reverse;
+  return e('div',{className:cx('grid md:grid-cols-2 gap-10 md:gap-16 items-center py-16 md:py-20 border-t border-[var(--line-soft)]')},
+    e('div',{className:cx('order-2', reverse?'md:order-2':'md:order-1')},
+      e(Kicker,null, props.kicker),
+      e('h3',{className:'mt-4 text-[28px] sm:text-[34px] font-bold tracking-[-.02em] text-[var(--ink)] balance'}, props.title),
+      e('p',{className:'mt-4 text-[16px] leading-relaxed text-[var(--ink-soft)] max-w-[440px]'}, props.desc)
+    ),
+    e('div',{className:cx('order-1', reverse?'md:order-1':'md:order-2', 'flex justify-center')}, props.visual)
+  );
+}
+
+function MiniIllustration(props){
+  return e('div',{className:'relative w-full max-w-[380px] aspect-[4/3] rounded-[28px] border border-[var(--line)] bg-[var(--bg-alt)] flex items-center justify-center overflow-hidden'},
+    e('div',{className:'absolute inset-0 opacity-[.5]', style:{backgroundImage:'radial-gradient(var(--line) 1px, transparent 1px)', backgroundSize:'18px 18px'}}),
+    e('div',{className:'relative w-20 h-20 rounded-3xl bg-white border border-[var(--line)] shadow-[0_20px_40px_-15px_rgba(29,29,31,.25)] flex items-center justify-center text-[var(--accent-ink)]'}, e(props.icon,{size:32,strokeWidth:1.5}))
+  );
+}
+
+function LandingPage(props){
+  var navLinks = [['Akademi','#akademi'],['Özellikler','#ozellikler'],['Fiyatlandırma','#fiyat']];
+  return e('div',{className:'min-h-screen bg-[var(--bg)]'},
+    e('header',{className:'sticky top-0 z-40 glass border-b border-[var(--line-soft)]'},
+      e('div',{className:'max-w-[1120px] mx-auto px-6 sm:px-8 h-16 flex items-center justify-between'},
+        e(Logo,null),
+        e('nav',{className:'hidden md:flex items-center gap-8'}, navLinks.map(function(n){
+          return e('a',{key:n[0], href:n[1], className:'text-[14px] font-medium text-[var(--ink)]/70 hover:text-[var(--ink)] transition-colors'}, n[0]);
+        })),
+        e('div',{className:'flex items-center gap-2 sm:gap-4'},
+          e(TextButton,{onClick:function(){props.onAuth('login');}},'Giriş Yap'),
+          e(PrimaryButton,{onClick:function(){props.onAuth('signup');}, className:'!px-5 !py-2 !text-[13px]'},'Kaydol')
+        )
+      )
+    ),
+
+    e('section',{className:'relative pt-16 sm:pt-24 pb-10 overflow-hidden'},
+      e('div',{className:'max-w-[1120px] mx-auto px-6 sm:px-8 text-center'},
+        e('div',{className:'reveal'},
+          e(Kicker,null,'Cebinizdeki yazı odası')
+        ),
+        e('h1',{className:'reveal balance mt-5 text-[42px] sm:text-[64px] md:text-[76px] font-extrabold tracking-[-.03em] leading-[1.02] text-[var(--ink)]', style:{animationDelay:'.05s'}},
+          'Cebindeki', e('br'), 'Senaryo Ofisi.'
+        ),
+        e('p',{className:'reveal balance mt-6 text-[17px] sm:text-[19px] text-[var(--ink-soft)] max-w-[560px] mx-auto leading-relaxed', style:{animationDelay:'.1s'}},
+          'Fikirlerinizi yatağınızda, sette veya metroda yazın. Şablonlarla boğuşmayın, sadece hikayenize odaklanın.'
+        ),
+        e('div',{className:'reveal mt-9 flex items-center justify-center gap-3', style:{animationDelay:'.15s'}},
+          e(PrimaryButton,{size:'lg', onClick:props.onStartWriting},'Hemen Yazmaya Başla', e(IconArrowRight,{size:17,className:'transition-transform group-hover:translate-x-0.5'})),
+        ),
+        e('p',{className:'reveal mt-4 text-[12.5px] text-[var(--ink-faint)]', style:{animationDelay:'.2s'}}, 'Kayıt olmadan deneyin — istediğinizde hesap açın.')
+      ),
+      e('div',{className:'reveal mt-16 sm:mt-20 px-6', style:{animationDelay:'.25s'}}, e(DeviceMock,null))
+    ),
+
+    e('section',{id:'ozellikler', className:'max-w-[1120px] mx-auto px-6 sm:px-8'},
+      e(FeatureRow,{
+        kicker:'Her yerde', title:'İstediğin Yerde Yaz.',
+        desc:'Evde, otobüste, metroda ya da sette beklerken — senaryon her an parmaklarının ucunda. Yazdığın an kaydolur, kaldığın yerden devam edersin.',
+        visual: e(MiniIllustration,{icon:IconMapPin})
+      }),
+      e(FeatureRow,{
+        reverse:true, kicker:'Karakter matrisi', title:'Karakterlerini Düzenle.',
+        desc:'Karakterlerinin amacını (Want), içsel ihtiyacını (Need) ve karmaşık ilişki ağlarını tek bir bakışta cebine sığdır.',
+        visual: e(MiniIllustration,{icon:IconUsers})
+      }),
+      e(FeatureRow,{
+        kicker:'Dramatik yapı', title:'Dramatik Yapını Kur.',
+        desc:'"Save the Cat!" ve Kahramanın Yolculuğu şablonlarıyla olay örgünü sağlam temellere oturt, hiçbir beat’i kaçırma.',
+        visual: e(MiniIllustration,{icon:IconLayers})
+      })
+    ),
+
+    e('section',{id:'akademi', className:'border-t border-[var(--line-soft)] mt-6'},
+      e('div',{className:'max-w-[1120px] mx-auto px-6 sm:px-8 py-20 text-center'},
+        e(Kicker,null,'Senaryotopia Akademi'),
+        e('h3',{className:'mt-4 text-[26px] sm:text-[32px] font-bold tracking-[-.02em] balance max-w-[600px] mx-auto'},'Yazarken öğren, öğrenirken yaz.'),
+        e('p',{className:'mt-4 text-[15.5px] text-[var(--ink-soft)] max-w-[520px] mx-auto leading-relaxed'},'Kısa dersler ve gerçek senaryo örnekleriyle zanaatını geliştir. Kaydolan her yazar Akademi’ye erişebilir.')
+      )
+    ),
+
+    e('section',{id:'fiyat', className:'border-t border-[var(--line-soft)]'},
+      e('div',{className:'max-w-[1120px] mx-auto px-6 sm:px-8 py-20'},
+        e('div',{className:'text-center mb-12'},
+          e(Kicker,null,'Fiyatlandırma'),
+          e('h3',{className:'mt-4 text-[26px] sm:text-[32px] font-bold tracking-[-.02em]'},'Basit, dürüst planlar.')
+        ),
+        e('div',{className:'grid sm:grid-cols-2 gap-6 max-w-[720px] mx-auto'},
+          e('div',{className:'rounded-[24px] border border-[var(--line)] bg-white p-8'},
+            e('div',{className:'text-[13px] font-semibold uppercase tracking-wide text-[var(--ink-soft)]'},'Misafir'),
+            e('div',{className:'mt-3 text-[32px] font-extrabold'},'₺0'),
+            e('p',{className:'mt-3 text-[14px] text-[var(--ink-soft)] leading-relaxed'},'Sınırsız senaryo yazımı ve PDF olarak dışa aktarma.'),
+            e(GhostButton,{onClick:props.onStartWriting, className:'mt-6 w-full'},'Yazmaya Başla')
+          ),
+          e('div',{className:'rounded-[24px] border border-[var(--accent)]/40 bg-[var(--accent-wash)] p-8 relative overflow-hidden'},
+            e('div',{className:'text-[13px] font-semibold uppercase tracking-wide text-[var(--accent-ink)]'},'Yazar'),
+            e('div',{className:'mt-3 text-[32px] font-extrabold'},'₺89',e('span',{className:'text-[15px] font-medium text-[var(--ink-soft)]'},'/ay')),
+            e('p',{className:'mt-3 text-[14px] text-[var(--ink)]/70 leading-relaxed'},'Karakter matrisi, dramatik yapı araçları, Akademi ve daha fazlası.'),
+            e(PrimaryButton,{onClick:function(){props.onAuth('signup');}, className:'mt-6 w-full'},'Ücretsiz Kayıt Ol')
+          )
+        )
+      )
+    ),
+
+    e('footer',{className:'border-t border-[var(--line-soft)]'},
+      e('div',{className:'max-w-[1120px] mx-auto px-6 sm:px-8 py-10 flex flex-col sm:flex-row items-center justify-between gap-4'},
+        e(Logo,{size:'text-[15px]'}),
+        e('p',{className:'text-[13px] text-[var(--ink-faint)] flex items-center gap-1.5'},'Yazarlar için, ',e(IconHeart,{size:12,className:'text-[var(--accent)]'}),' ile.')
+      )
+    )
+  );
+}
+
+/* ---------------------------------------------------------------- */
+/* AUTH MODAL                                                        */
+/* ---------------------------------------------------------------- */
+function AuthModal(props){
+  var mode0 = props.mode==='signup' ? 'signup' : 'login';
+  var s = useState(mode0), tab = s[0], setTab = s[1];
+  var n = useState(''), name = n[0], setName = n[1];
+  var em = useState(''), email = em[0], setEmail = em[1];
+  var pw = useState(''), pass = pw[0], setPass = pw[1];
+
+  function submit(ev){
+    ev.preventDefault();
+    var finalName = tab==='signup' ? (name.trim()||'Kerim') : (props.knownName||'Kerim');
+    props.onSuccess(finalName);
+  }
+
+  return e(Modal,{onClose:props.onClose},
+    props.reason ? e('div',{className:'mb-5 flex items-start gap-3 rounded-2xl bg-[var(--accent-wash)] border border-[var(--accent)]/25 p-4'},
+      e('span',{className:'mt-0.5 text-[var(--accent-ink)]'}, e(IconLock,{size:16})),
+      e('p',{className:'text-[13px] leading-relaxed text-[var(--accent-ink)]'}, props.reason)
+    ) : null,
+    e('div',{className:'flex items-center gap-1 mb-7 rounded-full bg-[var(--bg-alt)] border border-[var(--line-soft)] p-1 w-fit'},
+      e('button',{onClick:function(){setTab('login');}, className:cx('px-4 py-1.5 rounded-full text-[13px] font-semibold transition-colors', tab==='login'?'bg-white shadow-sm text-[var(--ink)]':'text-[var(--ink-soft)]')},'Giriş Yap'),
+      e('button',{onClick:function(){setTab('signup');}, className:cx('px-4 py-1.5 rounded-full text-[13px] font-semibold transition-colors', tab==='signup'?'bg-white shadow-sm text-[var(--ink)]':'text-[var(--ink-soft)]')},'Kaydol')
+    ),
+    e('h2',{className:'text-[24px] font-bold tracking-[-.01em] mb-1'}, tab==='login' ? 'Tekrar hoş geldin.' : 'Yazarlığa başla.'),
+    e('p',{className:'text-[14px] text-[var(--ink-soft)] mb-6'}, tab==='login' ? 'Senaryolarına kaldığın yerden devam et.' : 'Ücretsiz hesabını 20 saniyede oluştur.'),
+    e('form',{onSubmit:submit, className:'space-y-4'},
+      tab==='signup' ? e(TextField,{label:'Ad Soyad', value:name, onChange:setName, placeholder:'Kerim Yılmaz'}) : null,
+      e(TextField,{label:'E-posta', type:'email', value:email, onChange:setEmail, placeholder:'kerim@example.com', required:true}),
+      e(TextField,{label:'Şifre', type:'password', value:pass, onChange:setPass, placeholder:'••••••••', required:true}),
+      e(PrimaryButton,{type:'submit', className:'w-full mt-2'}, tab==='login' ? 'Giriş Yap' : 'Ücretsiz Kaydol', e(IconArrowRight,{size:16}))
+    ),
+    e('p',{className:'mt-6 text-center text-[12px] text-[var(--ink-faint)]'},'Bu bir prototip deneyimidir — girdiğiniz bilgiler kaydedilmez.')
+  );
+}
+
+/* ---------------------------------------------------------------- */
+/* NEW PROJECT MODAL                                                 */
+/* ---------------------------------------------------------------- */
+var PROJECT_TYPES = ['Uzun Metraj','Dizi Sezon/Bölüm','Kısa Film'];
+function NewProjectModal(props){
+  var n = useState(''), name = n[0], setName = n[1];
+  var t = useState(PROJECT_TYPES[0]), type = t[0], setType = t[1];
+  var a = useState(props.defaultAuthor||''), author = a[0], setAuthor = a[1];
+
+  function submit(ev){
+    ev.preventDefault();
+    props.onCreate({ name: name.trim()||'İsimsiz Senaryo', type: type, author: author.trim()||'Bilinmeyen Yazar' });
+  }
+  return e(Modal,{onClose:props.onClose},
+    e('div',{className:'w-11 h-11 rounded-2xl bg-[var(--accent-wash)] text-[var(--accent-ink)] flex items-center justify-center mb-5'}, e(IconSparkleWrite,{size:20})),
+    e('h2',{className:'text-[24px] font-bold tracking-[-.01em] mb-1'},'Yeni senaryo.'),
+    e('p',{className:'text-[14px] text-[var(--ink-soft)] mb-6'},'Birkaç detay yeter, hemen yazmaya başla.'),
+    e('form',{onSubmit:submit, className:'space-y-4'},
+      e(TextField,{label:'Proje Adı', value:name, onChange:setName, placeholder:'Kayıp Yolcu', required:true}),
+      e(SelectField,{label:'Proje Türü', value:type, onChange:setType, options:PROJECT_TYPES}),
+      e(TextField,{label:'Yazar Adı', value:author, onChange:setAuthor, placeholder:'Kerim Yılmaz'}),
+      e(PrimaryButton,{type:'submit', className:'w-full mt-2'},'Projeyi Başlat ve Yazmaya Geç', e(IconArrowRight,{size:16}))
+    )
+  );
+}
+
+/* ---------------------------------------------------------------- */
+/* QUICK NOTE + SCHEDULE MODALS (dashboard actions)                  */
+/* ---------------------------------------------------------------- */
+function QuickNoteModal(props){
+  var t = useState(''), text = t[0], setText = t[1];
+  function submit(ev){ ev.preventDefault(); if(text.trim()) props.onSave(text.trim()); props.onClose(); }
+  return e(Modal,{onClose:props.onClose},
+    e('div',{className:'w-11 h-11 rounded-2xl bg-[var(--accent-wash)] text-[var(--accent-ink)] flex items-center justify-center mb-5'}, e(IconNote,{size:20})),
+    e('h2',{className:'text-[24px] font-bold tracking-[-.01em] mb-1'},'Hızlı not.'),
+    e('p',{className:'text-[14px] text-[var(--ink-soft)] mb-6'},'Aklına gelen bir diyalog ya da fikri kaybetme.'),
+    e('form',{onSubmit:submit},
+      e('textarea',{
+        autoFocus:true, value:text, onChange:function(ev){setText(ev.target.value);}, rows:4,
+        placeholder:'Örn. Elif aslında kardeşini biliyordu…',
+        className:'w-full rounded-xl border border-[var(--line)] bg-[var(--bg-alt)] px-4 py-3 text-[15px] leading-relaxed outline-none focus:border-[var(--accent)] focus:bg-white focus:ring-4 focus:ring-[var(--accent)]/10 transition-all resize-none'
+      }),
+      e(PrimaryButton,{type:'submit', className:'w-full mt-4'},'Notu Kaydet', e(IconCheck,{size:16}))
+    )
+  );
+}
+
+function ScheduleModal(props){
+  var g = useState(props.initial ? props.initial.pages : 5), pages = g[0], setPages = g[1];
+  var ti = useState(props.initial ? props.initial.time : '09:00'), time = ti[0], setTime = ti[1];
+  function submit(ev){ ev.preventDefault(); props.onSave({pages:Number(pages), time:time}); props.onClose(); }
+  return e(Modal,{onClose:props.onClose},
+    e('div',{className:'w-11 h-11 rounded-2xl bg-[var(--accent-wash)] text-[var(--accent-ink)] flex items-center justify-center mb-5'}, e(IconTarget,{size:20})),
+    e('h2',{className:'text-[24px] font-bold tracking-[-.01em] mb-1'},'Yazım hedefi.'),
+    e('p',{className:'text-[14px] text-[var(--ink-soft)] mb-6'},'Günlük sayfa hedefini ve hatırlatma saatini belirle.'),
+    e('form',{onSubmit:submit, className:'space-y-5'},
+      e('div',null,
+        e('div',{className:'flex items-center justify-between mb-1.5'},
+          e('span',{className:'block text-[12px] font-semibold uppercase tracking-[.08em] text-[var(--ink-soft)]'},'Günlük Sayfa Hedefi'),
+          e('span',{className:'text-[13px] font-bold text-[var(--accent-ink)]'}, pages+' sayfa')
+        ),
+        e('input',{type:'range', min:1, max:15, value:pages, onChange:function(ev){setPages(ev.target.value);},
+          className:'w-full accent-[var(--accent)]'})
+      ),
+      e(TextField,{label:'Hatırlatma Saati', type:'time', value:time, onChange:setTime}),
+      e(PrimaryButton,{type:'submit', className:'w-full mt-2'},'Hedefi Kaydet', e(IconCheck,{size:16}))
+    )
+  );
+}
+
+/* ---------------------------------------------------------------- */
+/* DASHBOARD                                                         */
+/* ---------------------------------------------------------------- */
+function timeAgoTr(iso){
+  var diff = Math.max(0, Date.now() - new Date(iso).getTime());
+  var mins = Math.floor(diff/60000);
+  if(mins < 1) return 'az önce';
+  if(mins < 60) return mins+' dk önce';
+  var hrs = Math.floor(mins/60);
+  if(hrs < 24) return hrs+' sa önce';
+  var days = Math.floor(hrs/24);
+  return days+' gün önce';
+}
+
+function ActionCard(props){
+  return e('button',{onClick:props.onClick, className:cx(
+      'text-left rounded-[22px] border p-6 transition-all duration-200 hover:-translate-y-[2px] group',
+      props.featured
+        ? 'border-transparent bg-[var(--ink)] text-white shadow-[0_20px_45px_-18px_rgba(29,29,31,.55)] hover:shadow-[0_26px_55px_-16px_rgba(29,29,31,.6)]'
+        : 'border-[var(--line)] bg-white hover:border-[var(--ink)]/20 hover:shadow-[0_18px_38px_-20px_rgba(29,29,31,.25)]'
+    )},
+    e('div',{className:cx('w-10 h-10 rounded-xl flex items-center justify-center mb-5',
+        props.featured ? 'bg-white/15 text-[var(--accent-2)]' : 'bg-[var(--accent-wash)] text-[var(--accent-ink)]')},
+      e(props.icon,{size:19})
+    ),
+    e('div',{className:cx('text-[16px] font-bold tracking-[-.01em]', props.featured?'text-white':'text-[var(--ink)]')}, props.title),
+    e('p',{className:cx('mt-1.5 text-[13.5px] leading-relaxed', props.featured?'text-white/65':'text-[var(--ink-soft)]')}, props.desc),
+    props.chip ? e('div',{className:cx('mt-4 inline-flex items-center gap-1.5 text-[12px] font-semibold rounded-full px-3 py-1',
+        props.featured ? 'bg-white/10 text-[var(--accent-2)]' : 'bg-[var(--accent-wash)] text-[var(--accent-ink)]')}, props.chip) : null
+  );
+}
+
+function ProjectCard(props){
+  var p = props.project;
+  return e('button',{onClick:props.onClick, className:'text-left rounded-[22px] border border-[var(--line)] bg-white p-6 hover:-translate-y-[2px] hover:border-[var(--ink)]/20 hover:shadow-[0_18px_38px_-20px_rgba(29,29,31,.25)] transition-all duration-200'},
+    e('div',{className:'flex items-start justify-between gap-3'},
+      e('div',{className:'w-10 h-10 rounded-xl bg-[var(--bg-alt)] border border-[var(--line-soft)] flex items-center justify-center text-[var(--ink-soft)] font-mono-script text-[13px] font-bold'}, p.name.charAt(0).toUpperCase()),
+      e('span',{className:'text-[11px] font-semibold uppercase tracking-wide text-[var(--ink-faint)] border border-[var(--line)] rounded-full px-2.5 py-1'}, p.type)
+    ),
+    e('div',{className:'mt-5 text-[16px] font-bold tracking-[-.01em] text-[var(--ink)]'}, p.name),
+    e('p',{className:'mt-1 text-[13px] text-[var(--ink-soft)]'}, p.author),
+    e('div',{className:'mt-4 flex items-center gap-1.5 text-[12px] text-[var(--ink-faint)]'}, e(IconClock,{size:12}), timeAgoTr(p.updatedAt)+' düzenlendi')
+  );
+}
+
+function Dashboard(props){
+  var qn = useState(false), showQuickNote = qn[0], setShowQuickNote = qn[1];
+  var sc = useState(false), showSchedule = sc[0], setShowSchedule = sc[1];
+  var toastS = useState(''), toast = toastS[0], setToast = toastS[1];
+
+  useEffect(function(){
+    if(!toast) return;
+    var id = setTimeout(function(){ setToast(''); }, 2600);
+    return function(){ clearTimeout(id); };
+  },[toast]);
+
+  var now = new Date();
+  var dateStr = now.toLocaleDateString('tr-TR', { weekday:'long', day:'numeric', month:'long' });
+  var timeStr = now.toLocaleTimeString('tr-TR', { hour:'2-digit', minute:'2-digit' });
+
+  return e('div',{className:'min-h-screen bg-[var(--bg-alt)]'},
+    e('header',{className:'sticky top-0 z-30 glass border-b border-[var(--line-soft)]'},
+      e('div',{className:'max-w-[1120px] mx-auto px-6 sm:px-8 h-16 flex items-center justify-between'},
+        e(Logo,null),
+        e('div',{className:'flex items-center gap-3'},
+          e('span',{className:'hidden sm:inline text-[13px] text-[var(--ink-soft)]'}, dateStr+' · '+timeStr),
+          e('button',{onClick:props.onSignOut, className:'w-9 h-9 rounded-full bg-[var(--ink)] text-white text-[13px] font-bold flex items-center justify-center'}, (props.userName||'K').charAt(0).toUpperCase())
+        )
+      )
+    ),
+    e('main',{className:'max-w-[1120px] mx-auto px-6 sm:px-8 py-12'},
+      e('div',{className:'reveal'},
+        e('h1',{className:'text-[32px] sm:text-[38px] font-extrabold tracking-[-.02em]'}, 'Hoş geldin, '+(props.userName||'Yazar')+'.'),
+        e('p',{className:'mt-2 text-[15px] text-[var(--ink-soft)]'}, dateStr+' · Bugün yazmaya ne dersin?')
+      ),
+
+      e('div',{className:'reveal mt-8 grid sm:grid-cols-3 gap-5', style:{animationDelay:'.05s'}},
+        e(ActionCard,{ featured:true, icon:IconPlus, title:'Yeni Proje Oluştur', desc:'Sıfırdan bir senaryoya başla.', onClick:props.onNewProject }),
+        e(ActionCard,{ icon:IconNote, title:'Not Al', desc:'Aklına gelen fikri hızlıca kaydet.', onClick:function(){setShowQuickNote(true);} }),
+        e(ActionCard,{ icon:IconTarget, title:'Yazımını Programla', desc:'Günlük sayfa hedefi belirle.', onClick:function(){setShowSchedule(true);},
+          chip: props.dailyGoal ? (props.dailyGoal.pages+' sayfa · '+props.dailyGoal.time) : null })
+      ),
+
+      e('div',{className:'reveal mt-14', style:{animationDelay:'.1s'}},
+        e('div',{className:'flex items-center justify-between mb-5'},
+          e('h2',{className:'text-[19px] font-bold tracking-[-.01em]'},'Son Çalışılan Projelerim'),
+          e('span',{className:'text-[13px] text-[var(--ink-faint)]'}, props.projects.length+' proje')
+        ),
+        e('div',{className:'grid sm:grid-cols-2 lg:grid-cols-3 gap-5'},
+          props.projects.map(function(p){ return e(ProjectCard,{key:p.id, project:p, onClick:function(){props.onOpenProject(p.id);}}); })
+        )
+      ),
+
+      props.quickNotes.length ? e('div',{className:'reveal mt-14', style:{animationDelay:'.15s'}},
+        e('h2',{className:'text-[19px] font-bold tracking-[-.01em] mb-5'},'Fikir Sandığı'),
+        e('div',{className:'grid sm:grid-cols-3 gap-4'},
+          props.quickNotes.slice(0,6).map(function(nte){
+            return e('div',{key:nte.id, className:'rounded-2xl border border-[var(--line)] bg-white p-5'},
+              e('p',{className:'text-[13.5px] leading-relaxed text-[var(--ink)]/85'}, nte.text),
+              e('div',{className:'mt-3 text-[11px] text-[var(--ink-faint)]'}, timeAgoTr(nte.createdAt))
+            );
+          })
+        )
+      ) : null
+    ),
+
+    showQuickNote ? e(QuickNoteModal,{onClose:function(){setShowQuickNote(false);}, onSave:function(text){ props.onAddNote(text); setToast('Not kaydedildi.'); }}) : null,
+    showSchedule ? e(ScheduleModal,{onClose:function(){setShowSchedule(false);}, initial:props.dailyGoal, onSave:function(g){ props.onSetGoal(g); setToast('Hedef kaydedildi.'); }}) : null,
+
+    toast ? e('div',{className:'fixed bottom-6 left-1/2 -translate-x-1/2 z-[110] reveal bg-[var(--ink)] text-white text-[13px] font-medium px-5 py-3 rounded-full shadow-[0_15px_40px_-10px_rgba(0,0,0,.5)] flex items-center gap-2', style:{animationDuration:'.3s'}},
+      e(IconCheck,{size:14,className:'text-[var(--accent-2)]'}), toast
+    ) : null
+  );
+}
+
+/* ---------------------------------------------------------------- */
+/* PROJECT DATA MODEL                                                */
+/* ---------------------------------------------------------------- */
+var BEATS_TEMPLATE = [
+  'Açılış Görüntüsü','Tema Belirtilir','Kurulum','Katalizör','Tartışma',
+  '2. Perdeye Giriş','B Hikayesi','Eğlenceler ve Oyunlar','Orta Nokta',
+  'Kötüler Yaklaşıyor','Her Şey Kaybedilir','Ruhun Karanlık Gecesi',
+  '3. Perdeye Giriş','Final','Son Görüntü'
+];
+function uid(prefix){ return prefix+Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
+
+function seedBlocks(){
+  return [
+    {id:uid('b'), type:'scene', text:'1. İÇ. AHŞAP EV - GECE'},
+    {id:uid('b'), type:'action', text:'Pencereden sızan mehtap ışığı, tozlu döşeme tahtalarında ince bir çizgi çizer. ELİF (28), elinde titrek bir fenerle karanlığa adım atar.'},
+    {id:uid('b'), type:'character', text:'ELİF'},
+    {id:uid('b'), type:'parenthetical', text:'(fısıltıyla)'},
+    {id:uid('b'), type:'dialogue', text:'Burada biri var mı?'},
+    {id:uid('b'), type:'action', text:'Sessizlik. Sadece tahtaların gıcırtısı. Fener ışığı köşedeki eski bir sandığa takılır kalır.'}
+  ];
+}
+function makeProject(opts){
+  var now = new Date().toISOString();
+  return {
+    id: uid('p'),
+    name: opts.name, type: opts.type, author: opts.author,
+    createdAt: now, updatedAt: now,
+    logline: '', synopsis: '', treatment: '',
+    blocks: seedBlocks(),
+    beats: BEATS_TEMPLATE.map(function(b){ return {name:b, text:''}; }),
+    characters: [
+      {id:uid('c'), name:'Elif', want:'Kayıp kardeşini bulmak.', need:'Geçmişiyle yüzleşip kendini affetmek.'}
+    ],
+    notes: []
+  };
+}
+function sampleProjects(){
+  var p1 = makeProject({name:'Kayıp Yolcu', type:'Uzun Metraj', author:'Kerim'});
+  p1.updatedAt = new Date(Date.now()-1000*60*47).toISOString();
+  p1.logline = "Anadolu'da tenha bir istasyonda mahsur kalan bir kondüktör, kayıp kızının izini son bir yolcunun çantasında bulur.";
+  var p2 = makeProject({name:'Sahilde Bir Yaz', type:'Dizi Sezon/Bölüm', author:'Kerim'});
+  p2.updatedAt = new Date(Date.now()-1000*60*60*26).toISOString();
+  p2.characters.push({id:uid('c'), name:'Mert', want:'Aile pansiyonunu kurtarmak.', need:'Kontrolü bırakmayı öğrenmek.'});
+  return [p1, p2];
+}
+
+/* ---------------------------------------------------------------- */
+/* SCREENPLAY EDITOR                                                 */
+/* ---------------------------------------------------------------- */
+var BLOCK_CLASS = {
+  scene:'block-scene font-mono-script text-[13px] sm:text-[13.5px]',
+  action:'block-action font-mono-script text-[13.5px] sm:text-[14px] leading-[1.75]',
+  character:'block-character font-mono-script text-[13.5px] sm:text-[14px]',
+  dialogue:'block-dialogue font-mono-script text-[13.5px] sm:text-[14px] leading-[1.6]',
+  parenthetical:'block-parenthetical font-mono-script text-[13px]'
+};
+var BLOCK_PLACEHOLDER = {
+  scene:'SAHNE BAŞLIĞI — örn. 1. İÇ. MEKÂN - GÜN',
+  action:'Eylem / açıklama…',
+  character:'KARAKTER ADI',
+  dialogue:'Diyalog…',
+  parenthetical:'(parantez)'
+};
+var FORMAT_BUTTONS = [
+  {type:'scene', label:'Sahne'},
+  {type:'action', label:'Eylem'},
+  {type:'character', label:'Karakter'},
+  {type:'dialogue', label:'Diyalog'},
+  {type:'parenthetical', label:'Parantez'}
+];
+
+function BlockEditable(props){
+  var block = props.block;
+  var localRef = useRef(null);
+  function combinedRef(node){
+    localRef.current = node;
+    props.registerRef(block.id, node);
+    if(node && !node.hasAttribute('data-inited')){
+      node.textContent = block.text;
+      node.setAttribute('data-inited','true');
+    }
+  }
+  function handleBlur(){ if(localRef.current) props.onCommit(localRef.current.textContent); }
+  function handleKeyDown(ev){
+    if(ev.key==='Enter'){ ev.preventDefault(); props.onCommit(localRef.current.textContent); props.onEnter(); }
+    else if(ev.key==='Backspace' && localRef.current && localRef.current.textContent===''){ ev.preventDefault(); props.onBackspaceEmpty(); }
+  }
+  return e('div',{className:cx('block-wrap', props.isActive?'is-active':''), onClick:function(){ if(localRef.current) localRef.current.focus(); }},
+    e('div',{
+      ref:combinedRef, contentEditable:true, suppressContentEditableWarning:true,
+      onFocus:props.onFocus, onBlur:handleBlur, onKeyDown:handleKeyDown,
+      'data-placeholder':BLOCK_PLACEHOLDER[block.type],
+      className: BLOCK_CLASS[block.type]+' text-[var(--ink)]'
+    })
+  );
+}
+
+function ScriptEditor(props){
+  var blocks = props.project.blocks;
+  var af = useState(null), activeId = af[0], setActiveId = af[1];
+  var pf = useState(null), pendingFocus = pf[0], setPendingFocus = pf[1];
+  var refs = useRef({});
+
+  useEffect(function(){
+    if(pendingFocus && refs.current[pendingFocus]){
+      var node = refs.current[pendingFocus];
+      node.focus();
+      try{
+        var range = document.createRange(); range.selectNodeContents(node); range.collapse(false);
+        var sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(range);
+      }catch(err){}
+      setPendingFocus(null);
+    }
+  },[pendingFocus, blocks]);
+
+  function updateBlocks(nb){ props.onUpdateBlocks(nb); }
+  function commitText(id, text){ updateBlocks(blocks.map(function(b){ return b.id===id ? Object.assign({},b,{text:text}) : b; })); }
+  function appendBlock(type){
+    var nb = {id:uid('b'), type:type, text:''};
+    updateBlocks(blocks.concat([nb]));
+    setPendingFocus(nb.id);
+  }
+  function setActiveType(type){
+    if(activeId){ updateBlocks(blocks.map(function(b){ return b.id===activeId ? Object.assign({},b,{type:type}) : b; })); }
+    else { appendBlock(type); }
+  }
+  function handleEnter(id){
+    var idx = blocks.findIndex(function(b){ return b.id===id; });
+    var cur = blocks[idx];
+    var nextType = (cur.type==='character' || cur.type==='parenthetical') ? 'dialogue' : 'action';
+    var nb = {id:uid('b'), type:nextType, text:''};
+    var nblocks = blocks.slice(0,idx+1).concat([nb]).concat(blocks.slice(idx+1));
+    updateBlocks(nblocks);
+    setPendingFocus(nb.id);
+  }
+  function handleBackspaceEmpty(id){
+    var idx = blocks.findIndex(function(b){ return b.id===id; });
+    if(idx<=0 || blocks.length<=1) return;
+    var nblocks = blocks.slice(0,idx).concat(blocks.slice(idx+1));
+    updateBlocks(nblocks);
+    setPendingFocus(nblocks[idx-1].id);
+  }
+
+  return e('div',{className:'flex flex-col h-full'},
+    e('div',{className:'flex-1 overflow-y-auto px-4 sm:px-10 py-10'},
+      e('div',{className:'script-page mx-auto max-w-[680px] rounded-sm border border-[var(--line)] shadow-[0_30px_70px_-30px_rgba(29,29,31,.25)] px-8 sm:px-14 py-12 sm:py-16 min-h-[900px]'},
+        blocks.map(function(b){
+          return e(BlockEditable,{
+            key:b.id, block:b, isActive: activeId===b.id,
+            registerRef:function(id,node){ refs.current[id]=node; },
+            onFocus:function(){ setActiveId(b.id); },
+            onCommit:function(text){ commitText(b.id,text); },
+            onEnter:function(){ handleEnter(b.id); },
+            onBackspaceEmpty:function(){ handleBackspaceEmpty(b.id); }
+          });
+        })
+      ),
+      e('div',{className:'h-24'})
+    ),
+    e('div',{className:'sticky bottom-0 border-t border-[var(--line-soft)] glass px-3 sm:px-6 py-3'},
+      e('div',{className:'max-w-[680px] mx-auto flex items-center gap-2 overflow-x-auto no-scrollbar'},
+        FORMAT_BUTTONS.map(function(f){
+          var isActiveType = activeId && (blocks.find(function(b){return b.id===activeId;})||{}).type===f.type;
+          return e('button',{
+            key:f.type, onClick:function(){ setActiveType(f.type); },
+            className: cx('shrink-0 px-4 py-2 rounded-full text-[12.5px] font-semibold border transition-colors',
+              isActiveType ? 'bg-[var(--ink)] text-white border-[var(--ink)]' : 'bg-white text-[var(--ink)]/70 border-[var(--line)] hover:border-[var(--ink)]/30')
+          }, f.label);
+        })
+      )
+    )
+  );
+}
+
+/* ---------------------------------------------------------------- */
+/* INFO / STRUCTURE / CHARACTERS / NOTES PANELS                      */
+/* ---------------------------------------------------------------- */
+function PanelTextarea(props){
+  return e('div',{className:'mb-7'},
+    e('span',{className:'block text-[12px] font-semibold uppercase tracking-[.08em] text-[var(--ink-soft)] mb-2'}, props.label),
+    e('textarea',{
+      value:props.value, onChange:function(ev){props.onChange(ev.target.value);}, rows:props.rows||4,
+      placeholder:props.placeholder,
+      className:'w-full rounded-2xl border border-[var(--line)] bg-white px-5 py-4 text-[14.5px] leading-relaxed outline-none focus:border-[var(--accent)] focus:ring-4 focus:ring-[var(--accent)]/10 transition-all resize-none'
+    })
+  );
+}
+function InfoPanel(props){
+  var p = props.project;
+  return e('div',{className:'max-w-[720px]'},
+    e(PanelTextarea,{label:'Logline', rows:2, value:p.logline, placeholder:'Hikayenizi tek cümlede özetleyin…', onChange:function(v){props.onUpdate({logline:v});}}),
+    e(PanelTextarea,{label:'Sinopsis', rows:6, value:p.synopsis, placeholder:'Hikayenin kısa özeti…', onChange:function(v){props.onUpdate({synopsis:v});}}),
+    e(PanelTextarea,{label:'Tretman', rows:10, value:p.treatment, placeholder:'Sahne sahne detaylı anlatım…', onChange:function(v){props.onUpdate({treatment:v});}})
+  );
+}
+
+function StructurePanel(props){
+  var p = props.project;
+  function updateBeat(i, text){
+    var beats = p.beats.slice(); beats[i] = Object.assign({}, beats[i], {text:text});
+    props.onUpdate({beats:beats});
+  }
+  return e('div',{className:'max-w-[720px] space-y-4'},
+    p.beats.map(function(b,i){
+      return e('div',{key:i, className:'rounded-2xl border border-[var(--line)] bg-white p-5'},
+        e('div',{className:'flex items-center gap-3 mb-3'},
+          e('span',{className:'w-7 h-7 rounded-full bg-[var(--accent-wash)] text-[var(--accent-ink)] text-[11px] font-bold flex items-center justify-center shrink-0'}, i+1),
+          e('span',{className:'text-[14.5px] font-semibold text-[var(--ink)]'}, b.name)
+        ),
+        e('textarea',{
+          value:b.text, onChange:function(ev){updateBeat(i, ev.target.value);}, rows:2,
+          placeholder:"Bu beat'te ne oluyor?",
+          className:'w-full rounded-xl border border-[var(--line-soft)] bg-[var(--bg-alt)] px-4 py-3 text-[13.5px] leading-relaxed outline-none focus:border-[var(--accent)] focus:bg-white focus:ring-4 focus:ring-[var(--accent)]/10 transition-all resize-none'
+        })
+      );
+    })
+  );
+}
+
+function CharacterCard(props){
+  var c = props.character;
+  function set(field,val){ props.onUpdate(Object.assign({},c,{}, (function(){var o={};o[field]=val;return o;})())); }
+  return e('div',{className:'rounded-[22px] border border-[var(--line)] bg-white p-6'},
+    e('div',{className:'flex items-start justify-between gap-3 mb-4'},
+      e('input',{value:c.name, onChange:function(ev){set('name',ev.target.value);}, placeholder:'Karakter Adı',
+        className:'text-[17px] font-bold tracking-[-.01em] outline-none bg-transparent w-full placeholder:text-[var(--ink-faint)] placeholder:font-normal'}),
+      e('button',{onClick:props.onDelete, 'aria-label':'Karakteri sil', className:'shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-[var(--ink-faint)] hover:text-[var(--ink)] hover:bg-[var(--bg-alt)] transition-colors'}, e(IconX,{size:14}))
+    ),
+    e('div',{className:'space-y-3'},
+      e('div',null,
+        e('span',{className:'block text-[10.5px] font-semibold uppercase tracking-[.08em] text-[var(--ink-soft)] mb-1'},'İstek (Want)'),
+        e('textarea',{value:c.want, onChange:function(ev){set('want',ev.target.value);}, rows:2, placeholder:'Karakterin dışsal amacı…',
+          className:'w-full rounded-lg border border-[var(--line-soft)] bg-[var(--bg-alt)] px-3 py-2 text-[13px] leading-relaxed outline-none focus:border-[var(--accent)] resize-none'})
+      ),
+      e('div',null,
+        e('span',{className:'block text-[10.5px] font-semibold uppercase tracking-[.08em] text-[var(--ink-soft)] mb-1'},'İhtiyaç (Need)'),
+        e('textarea',{value:c.need, onChange:function(ev){set('need',ev.target.value);}, rows:2, placeholder:'Karakterin içsel ihtiyacı…',
+          className:'w-full rounded-lg border border-[var(--line-soft)] bg-[var(--bg-alt)] px-3 py-2 text-[13px] leading-relaxed outline-none focus:border-[var(--accent)] resize-none'})
+      )
+    )
+  );
+}
+function CharactersPanel(props){
+  var p = props.project;
+  function updateChar(id, patch){
+    props.onUpdate({characters: p.characters.map(function(c){ return c.id===id ? Object.assign({},c,patch) : c; })});
+  }
+  function addChar(){
+    props.onUpdate({characters: p.characters.concat([{id:uid('c'), name:'', want:'', need:''}])});
+  }
+  function delChar(id){
+    props.onUpdate({characters: p.characters.filter(function(c){ return c.id!==id; })});
+  }
+  return e('div',{className:'max-w-[900px]'},
+    e('div',{className:'grid sm:grid-cols-2 gap-5'},
+      p.characters.map(function(c){
+        return e(CharacterCard,{key:c.id, character:c, onUpdate:function(patch){updateChar(c.id,patch);}, onDelete:function(){delChar(c.id);}});
+      }),
+      e('button',{onClick:addChar, className:'rounded-[22px] border-2 border-dashed border-[var(--line)] hover:border-[var(--accent)]/50 hover:bg-[var(--accent-wash)]/40 transition-colors flex flex-col items-center justify-center gap-2 py-10 text-[var(--ink-soft)]'},
+        e('span',{className:'w-9 h-9 rounded-full bg-[var(--bg-alt)] flex items-center justify-center'}, e(IconPlus,{size:16})),
+        e('span',{className:'text-[13px] font-semibold'},'Yeni Karakter Ekle')
+      )
+    )
+  );
+}
+
+function NotesPanel(props){
+  var p = props.project;
+  var t = useState(''), draft = t[0], setDraft = t[1];
+  function addNote(){
+    if(!draft.trim()) return;
+    props.onUpdate({notes:[{id:uid('n'), text:draft.trim(), createdAt:new Date().toISOString()}].concat(p.notes)});
+    setDraft('');
+  }
+  function delNote(id){ props.onUpdate({notes:p.notes.filter(function(n){return n.id!==id;})}); }
+  return e('div',{className:'max-w-[720px]'},
+    e('div',{className:'rounded-2xl border border-[var(--line)] bg-white p-5 mb-6 flex items-start gap-3'},
+      e('textarea',{value:draft, onChange:function(ev){setDraft(ev.target.value);}, rows:2, placeholder:'Yeni bir fikir, diyalog ya da hatırlatma yaz…',
+        className:'flex-1 outline-none text-[14px] leading-relaxed resize-none placeholder:text-[var(--ink-faint)]'}),
+      e(GhostButton,{onClick:addNote, className:'!px-4 !py-2 shrink-0'}, e(IconPlus,{size:14}),'Ekle')
+    ),
+    p.notes.length===0 ? e('p',{className:'text-[13.5px] text-[var(--ink-faint)]'},'Henüz not yok.') :
+    e('div',{className:'space-y-3'},
+      p.notes.map(function(n){
+        return e('div',{key:n.id, className:'group rounded-2xl border border-[var(--line)] bg-[var(--bg-alt)] p-5 flex items-start justify-between gap-4'},
+          e('p',{className:'text-[13.5px] leading-relaxed text-[var(--ink)]/85'}, n.text),
+          e('button',{onClick:function(){delNote(n.id);}, className:'shrink-0 opacity-0 group-hover:opacity-100 transition-opacity text-[var(--ink-faint)] hover:text-[var(--ink)]'}, e(IconX,{size:14}))
+        );
+      })
+    )
+  );
+}
+
+function LockedPanel(props){
+  return e('div',{className:'relative'},
+    e('div',{className:'pointer-events-none select-none', style:{filter:'blur(6px)', opacity:.55}}, props.children),
+    e('div',{className:'absolute inset-0 flex items-start sm:items-center justify-center pt-10 sm:pt-0 px-4'},
+      e('div',{className:'max-w-[380px] w-full text-center bg-white/95 backdrop-blur-md border border-[var(--line)] rounded-[26px] shadow-[0_25px_70px_-20px_rgba(29,29,31,.35)] p-8'},
+        e('div',{className:'mx-auto w-12 h-12 rounded-2xl bg-[var(--accent-wash)] text-[var(--accent-ink)] flex items-center justify-center mb-4'}, e(IconLock,{size:20})),
+        e('p',{className:'text-[14.5px] leading-relaxed text-[var(--ink)]/85'}, 'Bu özelliği kullanmak için ücretsiz kayıt oluşturun. '+props.label+' senaryona entegre et.'),
+        e(PrimaryButton,{onClick:props.onUnlock, className:'mt-5 w-full'},'Ücretsiz Kayıt Ol', e(IconArrowRight,{size:15}))
+      )
+    )
+  );
+}
+
+/* ---------------------------------------------------------------- */
+/* PRINT VIEW                                                        */
+/* ---------------------------------------------------------------- */
+function PrintScript(props){
+  var p = props.project;
+  if(!p) return null;
+  return e('div',{id:'print-script', className:'font-mono-script'},
+    e('div',{style:{textAlign:'center', marginBottom:'2em'}}, e('strong',null, p.name.toUpperCase()), e('div',null,'Yazan: '+p.author)),
+    p.blocks.map(function(b){
+      return e('div',{key:b.id, className:BLOCK_CLASS[b.type].split(' ')[0]}, b.text);
+    })
+  );
+}
+
+/* ---------------------------------------------------------------- */
+/* WORKSPACE                                                         */
+/* ---------------------------------------------------------------- */
+var WS_TABS = [
+  {id:'bilgiler', label:'Bilgiler', icon:IconFileText, lockLabel:'Sinopsis ve tretman araçlarını'},
+  {id:'senaryo', label:'Senaryo', icon:IconPencil},
+  {id:'yapi', label:'Dramatik Yapı', icon:IconLayers, lockLabel:'Dramatik yapı şablonunu'},
+  {id:'karakterler', label:'Karakterler', icon:IconUsers, lockLabel:'Karakter matrisini'},
+  {id:'notlar', label:'Notlar', icon:IconNote, lockLabel:'Fikir sandığını'}
+];
+
+function Workspace(props){
+  var project = props.project;
+  var ts = useState('senaryo'), tab = ts[0], setTab = ts[1];
+
+  function onUpdate(patch){ props.onUpdateProject(project.id, patch); }
+  function onUpdateBlocks(blocks){ props.onUpdateProject(project.id, {blocks:blocks}); }
+
+  function tryTab(id, locked){
+    if(locked && !props.isLoggedIn){ setTab(id); return; }
+    setTab(id);
+  }
+
+  function currentTabDef(){ return WS_TABS.find(function(t){return t.id===tab;}); }
+  var lockedNow = currentTabDef() && currentTabDef().lockLabel && !props.isLoggedIn;
+
+  function renderPanel(){
+    if(tab==='bilgiler') return e(InfoPanel,{project:project, onUpdate:onUpdate});
+    if(tab==='yapi') return e(StructurePanel,{project:project, onUpdate:onUpdate});
+    if(tab==='karakterler') return e(CharactersPanel,{project:project, onUpdate:onUpdate});
+    if(tab==='notlar') return e(NotesPanel,{project:project, onUpdate:onUpdate});
+    return null;
+  }
+
+  function handlePdf(){ window.print(); }
+
+  return e('div',{className:'h-screen flex flex-col bg-[var(--bg-alt)]'},
+    e('div',{id:'print-script-mount'}, e(PrintScript,{project:project})),
+    e('header',{className:'shrink-0 h-16 glass border-b border-[var(--line-soft)] flex items-center gap-4 px-4 sm:px-6'},
+      e('button',{onClick:props.onBack, className:'w-9 h-9 rounded-full flex items-center justify-center text-[var(--ink-soft)] hover:text-[var(--ink)] hover:bg-[var(--bg-alt)] transition-colors'}, e(IconChevronLeft,{size:18})),
+      e('div',{className:'min-w-0'},
+        e('div',{className:'text-[14.5px] font-bold truncate max-w-[240px] sm:max-w-none'}, project.name),
+        e('div',{className:'text-[11.5px] text-[var(--ink-faint)]'}, project.type+' · '+project.author)
+      ),
+      e('div',{className:'ml-auto flex items-center gap-2 text-[11.5px] text-[var(--ink-faint)]'},
+        e('span',{className:'w-1.5 h-1.5 rounded-full bg-[var(--accent)]'}), 'Taslak kaydedildi'
+      )
+    ),
+    e('div',{className:'flex-1 flex min-h-0'},
+      e('aside',{className:'shrink-0 w-full sm:w-[220px] border-b sm:border-b-0 sm:border-r border-[var(--line-soft)] bg-white flex sm:flex-col overflow-x-auto sm:overflow-visible no-scrollbar px-3 sm:px-3 py-3 sm:py-6 gap-1'},
+        WS_TABS.map(function(t){
+          var isLocked = t.lockLabel && !props.isLoggedIn;
+          return e('button',{
+            key:t.id, onClick:function(){tryTab(t.id, !!t.lockLabel);},
+            className: cx('shrink-0 flex items-center gap-2.5 rounded-xl px-3.5 py-2.5 text-[13.5px] font-medium transition-colors whitespace-nowrap',
+              tab===t.id ? 'bg-[var(--ink)] text-white' : 'text-[var(--ink)]/70 hover:bg-[var(--bg-alt)]')
+          },
+            e(t.icon,{size:15}), t.label,
+            isLocked ? e(IconLock,{size:11, className: tab===t.id?'text-white/60 ml-auto':'text-[var(--ink-faint)] ml-auto'}) : null
+          );
+        }),
+        e('div',{className:'hidden sm:block h-px bg-[var(--line-soft)] my-3'}),
+        e('button',{onClick:handlePdf, className:'shrink-0 flex items-center gap-2.5 rounded-xl px-3.5 py-2.5 text-[13.5px] font-semibold text-[var(--accent-ink)] hover:bg-[var(--accent-wash)] transition-colors whitespace-nowrap'},
+          e(IconDownload,{size:15}), 'İndir (PDF)'
+        )
+      ),
+      e('main',{className:'flex-1 min-w-0 flex flex-col overflow-hidden'},
+        tab==='senaryo'
+          ? e(ScriptEditor,{project:project, onUpdateBlocks:onUpdateBlocks})
+          : e('div',{className:'flex-1 overflow-y-auto px-5 sm:px-10 py-8 sm:py-10'},
+              lockedNow
+                ? e(LockedPanel,{label:currentTabDef().lockLabel, onUnlock:function(){props.onAuth('signup', currentTabDef().lockLabel+' kullanmak için ücretsiz kayıt oluşturun.');}}, renderPanel())
+                : renderPanel()
+            )
+      )
+    )
+  );
+}
+
+/* ---------------------------------------------------------------- */
+/* APP ROOT                                                          */
+/* ---------------------------------------------------------------- */
+function App(){
+  var vs = useState('landing'), view = vs[0], setView = vs[1];
+  var lg = useState(false), isLoggedIn = lg[0], setIsLoggedIn = lg[1];
+  var un = useState(''), userName = un[0], setUserName = un[1];
+  var pr = useState(function(){ return sampleProjects(); }), projects = pr[0], setProjects = pr[1];
+  var ap = useState(null), activeProjectId = ap[0], setActiveProjectId = ap[1];
+  var qn = useState([]), quickNotes = qn[0], setQuickNotes = qn[1];
+  var dg = useState(null), dailyGoal = dg[0], setDailyGoal = dg[1];
+  var npm = useState(false), showNewProject = npm[0], setShowNewProject = npm[1];
+  var am = useState({open:false}), authModal = am[0], setAuthModal = am[1];
+
+  function openAuth(mode, reason, intent){ setAuthModal({open:true, mode:mode, reason:reason||null, intent:intent||'header'}); }
+  function closeAuth(){ setAuthModal({open:false}); }
+  function completeAuth(name){
+    setUserName(name); setIsLoggedIn(true);
+    var intent = authModal.intent;
+    closeAuth();
+    if(intent!=='unlock'){ setView('dashboard'); }
+  }
+
+  function openNewProject(){ setShowNewProject(true); }
+  function createProject(data){
+    var proj = makeProject(data);
+    setProjects(function(prev){ return prev.concat([proj]); });
+    setActiveProjectId(proj.id);
+    setShowNewProject(false);
+    setView('workspace');
+  }
+  function openProject(id){ setActiveProjectId(id); setView('workspace'); }
+  function updateProject(id, patch){
+    setProjects(function(prev){
+      return prev.map(function(p){ return p.id===id ? Object.assign({}, p, patch, {updatedAt:new Date().toISOString()}) : p; });
+    });
+  }
+  function goBackFromWorkspace(){ setView(isLoggedIn ? 'dashboard' : 'landing'); }
+  function signOut(){ setIsLoggedIn(false); setView('landing'); }
+  function addQuickNote(text){ setQuickNotes(function(prev){ return [{id:uid('qn'), text:text, createdAt:new Date().toISOString()}].concat(prev); }); }
+
+  var activeProject = projects.find(function(p){ return p.id===activeProjectId; }) || null;
+
+  useEffect(function(){ document.body.style.background = 'var(--bg)'; },[]);
+
+  return e(React.Fragment, null,
+    view==='landing' ? e(LandingPage,{
+      onAuth:function(mode){ openAuth(mode, null, 'header'); },
+      onStartWriting: openNewProject
+    }) : null,
+
+    view==='dashboard' ? e(Dashboard,{
+      userName:userName, projects:projects, quickNotes:quickNotes, dailyGoal:dailyGoal,
+      onNewProject:openNewProject, onOpenProject:openProject,
+      onAddNote:addQuickNote, onSetGoal:setDailyGoal, onSignOut:signOut
+    }) : null,
+
+    view==='workspace' && activeProject ? e(Workspace,{
+      project:activeProject, isLoggedIn:isLoggedIn,
+      onBack:goBackFromWorkspace,
+      onUpdateProject:updateProject,
+      onAuth:function(mode, reason){ openAuth(mode, reason, 'unlock'); }
+    }) : null,
+
+    showNewProject ? e(NewProjectModal,{
+      onClose:function(){ setShowNewProject(false); },
+      defaultAuthor:userName,
+      onCreate:createProject
+    }) : null,
+
+    authModal.open ? e(AuthModal,{
+      mode:authModal.mode, reason:authModal.reason, knownName:userName,
+      onClose:closeAuth, onSuccess:completeAuth
+    }) : null
+  );
+}
+
+var root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(e(App));
+})();
+</script>
+</body>
+</html>
+
