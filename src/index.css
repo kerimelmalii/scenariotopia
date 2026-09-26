@@ -1,0 +1,197 @@
+@import '@fontsource/inter/400.css';
+@import '@fontsource/inter/500.css';
+@import '@fontsource/inter/600.css';
+@import '@fontsource/inter/700.css';
+@import '@fontsource/inter/800.css';
+@import '@fontsource/courier-prime/400.css';
+@import '@fontsource/courier-prime/700.css';
+@import '@fontsource/courier-prime/400-italic.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #ffffff;
+  --bg-alt: #fbfbfd;
+  --ink: #1d1d1f;
+  --ink-soft: #86868b;
+  --ink-faint: #b8b8bd;
+  --line: #e5e7eb;
+  --line-soft: #efeff1;
+  --accent: #0a66c2;
+  --accent-2: #2f8ae0;
+  --accent-ink: #0a4a8f;
+  --accent-wash: #eef4fb;
+  --paper: #ffffff;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+html {
+  background: var(--bg);
+}
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+.font-script {
+  font-family: 'Courier Prime', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+}
+h1,
+h2,
+h3,
+.balance {
+  text-wrap: balance;
+}
+::selection {
+  background: var(--accent-2);
+  color: #fff;
+}
+a:focus-visible,
+button:focus-visible,
+[tabindex]:focus-visible,
+[contenteditable]:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--line);
+  border-radius: 99px;
+  border: 2px solid var(--bg);
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.reveal {
+  animation: fadeUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    animation: none;
+  }
+}
+
+.glass {
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* Slugline-style meta label — the site's signature typographic motif,
+   borrowed from screenplay scene headings instead of a generic pill+dot kicker. */
+.slugline {
+  font-family: 'Courier Prime', ui-monospace, monospace;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* Subtle paper-grain texture used behind editorial sections instead of
+   flat white, so the marketing chrome doesn't read as a bare utility grid. */
+.paper-grain {
+  background-image: radial-gradient(var(--line-soft) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+/* screenplay page */
+.script-page {
+  background: var(--paper);
+}
+.block-scene {
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  margin: 1.75em 0 0.6em;
+}
+.block-action {
+  margin: 0 0 0.9em;
+}
+.block-character {
+  text-transform: uppercase;
+  margin: 1.1em 0 0;
+  padding-left: 38%;
+}
+.block-parenthetical {
+  margin: 0 0 0;
+  padding-left: 30%;
+  padding-right: 18%;
+  font-style: italic;
+  color: var(--ink-soft);
+}
+.block-dialogue {
+  margin: 0 0 0.9em;
+  padding-left: 20%;
+  padding-right: 20%;
+}
+[contenteditable] {
+  outline: none;
+  caret-color: var(--accent-ink);
+}
+[contenteditable]:empty:before {
+  content: attr(data-placeholder);
+  color: var(--ink-faint);
+}
+.block-wrap {
+  position: relative;
+  border-radius: 4px;
+  transition: background-color 0.12s ease;
+}
+.block-wrap:hover {
+  background-color: #fafafa;
+}
+.block-wrap.is-active {
+  background-color: var(--accent-wash);
+}
+
+@media screen {
+  #print-script {
+    display: none;
+  }
+}
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #print-script,
+  #print-script * {
+    visibility: visible;
+  }
+  #print-script {
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    padding: 1in;
+    font-size: 12pt;
+  }
+}
