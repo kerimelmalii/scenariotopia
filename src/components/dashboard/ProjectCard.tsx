@@ -12,7 +12,7 @@ export function ProjectCard({ project, onClick }: { project: Project; onClick: (
         <div className="w-10 h-10 rounded-xl bg-bg-alt border border-line-soft flex items-center justify-center text-ink-soft font-script text-[13px] font-bold">
           {project.name.charAt(0).toUpperCase()}
         </div>
-        <span className="text-[11px] font-semibold uppercase tracking-wide text-ink-faint border border-line rounded-full px-2.5 py-1">
+        <span className="font-script text-[10.5px] font-bold uppercase tracking-[.06em] text-ink-faint border border-line rounded-full px-2.5 py-1">
           {project.type}
         </span>
       </div>
