@@ -23,8 +23,8 @@ export function DeviceMock() {
   return (
     <div className="relative mx-auto w-full max-w-[520px]">
       <div
-        className="absolute -inset-16 -z-10 rounded-full opacity-70"
-        style={{ background: 'radial-gradient(closest-side, var(--accent-2), transparent 70%)', filter: 'blur(40px)' }}
+        className="absolute -inset-16 -z-10 rounded-full opacity-60"
+        style={{ background: 'radial-gradient(closest-side, var(--line), transparent 70%)', filter: 'blur(40px)' }}
       />
       <div className="relative rounded-[38px] border border-line bg-white shadow-[0_50px_100px_-30px_rgba(29,29,31,.35)] p-3">
         <div className="rounded-[28px] border border-line-soft bg-bg-alt overflow-hidden">
@@ -48,14 +48,14 @@ export function DeviceMock() {
         style={{ animationDelay: '.25s' }}
       >
         <div className="flex items-center gap-2 mb-2">
-          <span className="w-6 h-6 rounded-full bg-accent-wash flex items-center justify-center text-accent-ink">
+          <span className="w-6 h-6 rounded-full bg-bg-alt flex items-center justify-center text-ink">
             <IconTarget size={12} />
           </span>
           <span className="text-[9px] font-semibold text-ink-soft uppercase tracking-wide">Bugünkü Hedef</span>
         </div>
         <div className="text-[11px] text-ink font-semibold">4 / 5 sayfa</div>
         <div className="mt-2 h-1.5 rounded-full bg-line-soft overflow-hidden">
-          <div className="h-full rounded-full bg-gradient-to-r from-accent-2 to-accent" style={{ width: '80%' }} />
+          <div className="h-full rounded-full bg-ink" style={{ width: '80%' }} />
         </div>
       </div>
     </div>

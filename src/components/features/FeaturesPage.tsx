@@ -29,10 +29,9 @@ export function FeaturesPage({ onAuth, onStartWriting, onLogo, onNav }: PublicPa
             key={f.title}
             index={i}
             reverse={f.reverse}
-            categoryIndex={f.categoryIndex}
             title={f.title}
             desc={f.desc}
-            visual={<PaperVisual icon={f.icon} categoryIndex={f.categoryIndex} />}
+            visual={<PaperVisual icon={f.icon} />}
           />
         ))}
       </section>

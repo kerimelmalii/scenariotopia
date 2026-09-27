@@ -5,13 +5,10 @@ import { IconClock, IconLayers } from '../icons/icons';
 export function CourseCard({ course }: { course: AcademyCourse }) {
   const color = CATEGORY_COLORS[course.categoryIndex];
   return (
-    <div className="rounded-[22px] border border-line bg-white p-6 hover:-translate-y-[2px] hover:shadow-[0_18px_38px_-20px_rgba(10,10,10,.22)] transition-all duration-200">
+    <div className="rounded-[20px] bg-bg-alt p-6 hover:-translate-y-[2px] transition-all duration-200">
       <CategoryStripe activeIndex={course.categoryIndex} />
       <div className="mt-5 flex items-center gap-2">
-        <span
-          className="font-script text-[10.5px] font-bold uppercase tracking-[.06em] rounded-full px-2.5 py-1 border"
-          style={{ color, borderColor: `color-mix(in srgb, ${color} 35%, white)`, background: `color-mix(in srgb, ${color} 8%, white)` }}
-        >
+        <span className="font-script text-[10.5px] font-bold uppercase tracking-[.06em] rounded-full px-2.5 py-1 bg-white" style={{ color }}>
           {course.level}
         </span>
       </div>
