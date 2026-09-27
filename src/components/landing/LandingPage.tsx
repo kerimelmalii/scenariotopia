@@ -16,6 +16,7 @@ import { DeviceMock } from './DeviceMock';
 import { FeatureHighlightCard } from './FeatureHighlightCard';
 import { Newsletter } from './Newsletter';
 import { FormatCard } from '../format/FormatCard';
+import { PricingPlanCard } from '../pricing/PricingPlanCard';
 
 interface LandingPageProps {
   onAuth: (mode: AuthMode) => void;
@@ -83,7 +84,7 @@ export function LandingPage({ onAuth, onStartWriting, onLogo, onNav }: LandingPa
         </div>
       </section>
 
-      <section className="border-t border-line-soft bg-bg-alt">
+      <section className="border-t border-line-soft">
         <div className="max-w-[1120px] mx-auto px-6 sm:px-8 py-16 md:py-20">
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-10">
             <div>
@@ -122,40 +123,7 @@ export function LandingPage({ onAuth, onStartWriting, onLogo, onNav }: LandingPa
           </div>
           <div className="grid sm:grid-cols-2 gap-6 max-w-[720px] mx-auto">
             {PRICING_PLANS.map((plan) => (
-              <div
-                key={plan.key}
-                className={
-                  plan.featured
-                    ? 'rounded-[24px] border border-accent/40 bg-accent-wash p-8 relative overflow-hidden'
-                    : 'rounded-[24px] border border-line bg-white p-8'
-                }
-              >
-                <div
-                  className={
-                    plan.featured
-                      ? 'text-[13px] font-semibold uppercase tracking-wide text-accent-ink'
-                      : 'text-[13px] font-semibold uppercase tracking-wide text-ink-soft'
-                  }
-                >
-                  {plan.label}
-                </div>
-                <div className="mt-3 text-[32px] font-extrabold">
-                  {plan.price}
-                  {plan.priceSuffix ? <span className="text-[15px] font-medium text-ink-soft">{plan.priceSuffix}</span> : null}
-                </div>
-                <p className={plan.featured ? 'mt-3 text-[14px] text-ink/70 leading-relaxed' : 'mt-3 text-[14px] text-ink-soft leading-relaxed'}>
-                  {plan.desc}
-                </p>
-                {plan.featured ? (
-                  <PrimaryButton onClick={() => onAuth('signup')} className="mt-6 w-full">
-                    Ücretsiz Kayıt Ol
-                  </PrimaryButton>
-                ) : (
-                  <GhostButton onClick={onStartWriting} className="mt-6 w-full">
-                    Yazmaya Başla
-                  </GhostButton>
-                )}
-              </div>
+              <PricingPlanCard key={plan.key} plan={plan} onPrimaryAction={plan.featured ? () => onAuth('signup') : onStartWriting} />
             ))}
           </div>
           <div className="text-center mt-6">
