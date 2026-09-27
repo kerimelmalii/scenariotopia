@@ -41,7 +41,7 @@ export function Dashboard({ userName, projects, quickNotes, dailyGoal, onNewProj
         <div className="max-w-[1120px] mx-auto px-6 sm:px-8 h-16 flex items-center justify-between">
           <Logo />
           <div className="flex items-center gap-3">
-            <span className="hidden sm:inline text-[13px] text-ink-soft">
+            <span className="font-script hidden sm:inline text-[11px] font-bold uppercase tracking-[.06em] text-ink-soft">
               {dateStr} · {timeStr}
             </span>
             <button onClick={onSignOut} className="w-9 h-9 rounded-full bg-ink text-white text-[13px] font-bold flex items-center justify-center">
@@ -58,10 +58,11 @@ export function Dashboard({ userName, projects, quickNotes, dailyGoal, onNewProj
         </div>
 
         <div className="reveal mt-8 grid sm:grid-cols-3 gap-5" style={{ animationDelay: '.05s' }}>
-          <ActionCard featured icon={IconPlus} title="Yeni Proje Oluştur" desc="Sıfırdan bir senaryoya başla." onClick={onNewProject} />
-          <ActionCard icon={IconNote} title="Not Al" desc="Aklına gelen fikri hızlıca kaydet." onClick={() => setShowQuickNote(true)} />
+          <ActionCard featured icon={IconPlus} eyebrow="Proje" title="Yeni Proje Oluştur" desc="Sıfırdan bir senaryoya başla." onClick={onNewProject} />
+          <ActionCard icon={IconNote} eyebrow="Fikir" title="Not Al" desc="Aklına gelen fikri hızlıca kaydet." onClick={() => setShowQuickNote(true)} />
           <ActionCard
             icon={IconTarget}
+            eyebrow="Hedef"
             title="Yazımını Programla"
             desc="Günlük sayfa hedefi belirle."
             chip={dailyGoal ? `${dailyGoal.pages} sayfa · ${dailyGoal.time}` : null}
@@ -72,7 +73,7 @@ export function Dashboard({ userName, projects, quickNotes, dailyGoal, onNewProj
         <div className="reveal mt-14" style={{ animationDelay: '.1s' }}>
           <div className="flex items-center justify-between mb-5">
             <h2 className="text-[19px] font-bold tracking-[-.01em]">Son Çalışılan Projelerim</h2>
-            <span className="text-[13px] text-ink-faint">{projects.length} proje</span>
+            <span className="font-script text-[11px] font-bold uppercase tracking-[.06em] text-ink-faint">{projects.length} proje</span>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {projects.map((p) => (

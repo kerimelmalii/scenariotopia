@@ -1,4 +1,4 @@
-export type View = 'landing' | 'features' | 'dashboard' | 'workspace';
+export type View = 'landing' | 'features' | 'format' | 'akademi' | 'fiyat' | 'dashboard' | 'workspace';
 
 export type AuthMode = 'login' | 'signup';
 export type AuthIntent = 'header' | 'unlock';

@@ -1,29 +1,29 @@
-# Scenariotopia
+# Senaryotopia
 
-Cebindeki senaryo ofisi — ekran yazarları için Apple tarzı, minimalist bir mobil-öncelikli senaryo yazım uygulaması prototipi.
+Cebindeki senaryo ofisi — ekran yazarları için şık, premium ve mobil-öncelikli bir senaryo yazım uygulaması prototipi.
 
 ## Nedir?
 
-Scenariotopia, senaryo yazarlarının format kurallarıyla boğuşmadan, her yerde (evde, otobüste, sette) yazabilmesi için tasarlanmış bir konsept ürün. Tasarım dili, senaryo formatının kendisinden (slugline, Courier Prime, sahne numaraları) ilham alır — jenerik bir SaaS şablonu değil, yazarlık zanaatına özgü bir kimlik hedefler.
+Senaryotopia, senaryo yazarlarının format kurallarıyla boğuşmadan, her yerde (evde, otobüste, sette) yazabilmesi için tasarlanmış bir konsept ürün. Tasarım dili, senaryo formatının kendisinden (slugline etiketler, Courier Prime, sahne numaraları) ilham alır — jenerik bir SaaS şablonu değil, yazarlık zanaatına özgü bir kimlik hedefler. Marka kimliği, logodaki altı renkli çizgi motifinden türeyen bir "kategori rengi" sistemine dayanır: her kurs, etkinlik ve özellik kartı bu altı renkten birini taşır.
 
-## Özellikler
+## Sayfalar
 
-- **Landing sayfası** — ürünü tanıtan, editoryal ve sade bir giriş sayfası; "Nasıl çalışır" ve "Neden Scenariotopia" bölümleriyle.
-- **Ayrı Özellikler sayfası** — tüm özelliklerin detaylı anlatıldığı, kendi rotası olan bir sayfa.
-- **Misafir akışı** — kayıt olmadan sınırsız senaryo yazımı ve PDF olarak dışa aktarma.
-- **Blok tabanlı senaryo editörü** — Sahne / Eylem / Karakter / Diyalog / Parantez biçimlendirmesiyle gerçek sektör standardına uygun yazım.
-- **Dramatik yapı şablonu** — "Save the Cat!" beat sheet'i (kayıtlı kullanıcılar için).
-- **Karakter matrisi** — her karakter için İstek (Want) ve İhtiyaç (Need) alanları.
-- **Dashboard** — son projeler, hızlı not alma ve günlük yazım hedefi belirleme.
+- **Anasayfa** — hero, özellik/format/Akademi/fiyat teaser'ları ve bülten kaydı.
+- **Özellikler** — 8 özelliğin tek tek anlatıldığı detay sayfası.
+- **Format** — desteklenen 4 senaryo formatı (Uzun Metraj, Dizi, Kısa Film, Tiyatro).
+- **Akademi** — kurs kataloğu (6 kurs) ve yaklaşan yazı etkinlikleri (4 etkinlik).
+- **Fiyatlandırma** — planlar ve sık sorulan sorular.
+- **Dashboard / Editör** — kayıtlı ve misafir kullanıcılar için çalışma alanı: blok tabanlı senaryo editörü, dramatik yapı (Save the Cat!) şablonu, karakter matrisi (Want/Need), fikir sandığı ve günlük yazım hedefi.
 
 ## Teknoloji
 
-Proje, **Vite + React 18 + TypeScript** ile inşa edilmiş bir SPA'dır (tek dosyalık prototipten gerçek bir bileşen mimarisine taşındı):
+Proje, **Vite + React 18 + TypeScript** ile inşa edilmiş bir SPA'dır:
 
 - `src/App.tsx` — uygulama durumu ve sayfa yönlendirmesi (view state, gerçek bir router olmadan).
-- `src/components/` — `landing`, `features`, `dashboard`, `workspace`, `auth` ve paylaşılan `ui` bileşenleri.
-- `src/data/` — statik içerik (özellik listeleri, fiyatlandırma) ve tohum verisi (`seed.ts`).
+- `src/components/` — `landing`, `features`, `format`, `academy`, `pricing`, `dashboard`, `workspace`, `auth` ve paylaşılan `ui` bileşenleri.
+- `src/data/content.ts` — tüm pazarlama metinleri ve içerik listeleri (özellikler, formatlar, kurslar, etkinlikler, fiyatlandırma).
 - `src/types.ts` — tüm domain modelleri (Project, ScriptBlock, CharacterEntry, …) için tip tanımları.
+- `src/lib/` — Supabase istemcisi ve auth servisi (henüz uygulamaya bağlanmadı, `supabase/migrations/` altında şema hazır).
 - Stil: Tailwind CSS (gerçek derleme adımıyla, CDN üzerinden değil), tasarım token'ları `src/index.css` içindeki CSS değişkenlerinde.
 - Fontlar (`Inter`, `Courier Prime`) `@fontsource` ile self-host edilir; harici bir CDN'e bağımlılık yoktur.
 
@@ -37,9 +37,9 @@ npm run preview   # üretim derlemesini yerelde önizleme
 npm run lint      # ESLint
 ```
 
-GitHub Pages gibi statik bir barındırma için `npm run build` sonrası oluşan `dist/` klasörünü yayınlayın.
+`main` dalına her push'ta `.github/workflows/deploy-pages.yml` otomatik build alıp GitHub Pages'e yayınlar (repo ayarlarında Settings → Pages → Source: **GitHub Actions** seçili olmalı).
 
 ## Teknik notlar
 
-- Bu bir prototip/tasarım demosudur — giriş, kayıt ve veri kaydı simüle edilmiştir, gerçek bir backend'e bağlı değildir.
-- Tüm state React state'inde tutulur (kalıcı depolama yok); sayfa yenilendiğinde sıfırlanır.
+- Bu bir prototip/tasarım demosudur — giriş, kayıt ve veri kaydı şu an simüle edilmiştir, gerçek bir backend'e henüz bağlı değildir.
+- Tüm uygulama state'i React state'inde tutulur (kalıcı depolama yok); sayfa yenilendiğinde sıfırlanır.

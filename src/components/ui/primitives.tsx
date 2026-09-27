@@ -27,8 +27,8 @@ export function PrimaryButton({ size = 'md', className, children, ...rest }: But
       {...rest}
       className={cx(
         'group inline-flex items-center justify-center gap-2 rounded-full font-semibold text-white',
-        'bg-accent shadow-[0_10px_24px_-10px_rgba(10,102,194,.55)]',
-        'hover:bg-accent-ink hover:shadow-[0_14px_30px_-10px_rgba(10,102,194,.6)] hover:-translate-y-[1px]',
+        'bg-ink shadow-[0_10px_24px_-10px_rgba(10,10,10,.45)]',
+        'hover:bg-ink/85 hover:shadow-[0_14px_30px_-10px_rgba(10,10,10,.5)] hover:-translate-y-[1px]',
         'active:translate-y-0 transition-all duration-200',
         sizeCls,
         className,
@@ -165,25 +165,70 @@ export function Modal({ onClose, maxWidth, children }: ModalProps) {
   );
 }
 
-export function LogoMark({ size = 22 }: { size?: number }) {
+/** The six category colors, in the fixed order used across the logo stripe
+ * motif, course/event category coding and anywhere a "which category" signal
+ * is needed. Index 0-5 maps 1:1 to CATEGORY_COLORS in data/content.ts. */
+export const CATEGORY_COLORS = [
+  'var(--c-bordo)',
+  'var(--c-coral)',
+  'var(--c-purple)',
+  'var(--c-blue)',
+  'var(--c-turquoise)',
+  'var(--c-green)',
+] as const;
+
+export function LogoStripes({ barHeight = 10 }: { barHeight?: number }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 22 22" fill="none" aria-hidden="true" className="shrink-0">
-      <rect x={1} y={1} width={20} height={20} rx={6} className="fill-ink" />
-      <path d="M6 8h10M6 11h7" stroke="white" strokeWidth={1.4} strokeLinecap="round" />
-      <circle cx={7} cy={14.5} r={1.1} className="fill-accent-2" />
-      <path d="M9.5 14.5h6.5" stroke="white" strokeWidth={1.4} strokeLinecap="round" opacity={0.55} />
-    </svg>
+    <span className="inline-flex items-center gap-[3px]" aria-hidden="true">
+      {CATEGORY_COLORS.map((color, i) => (
+        <span
+          key={i}
+          className="rounded-[2px] shrink-0"
+          style={{ width: barHeight * 0.4, height: barHeight, background: color, transform: 'skewX(-16deg)' }}
+        />
+      ))}
+    </span>
   );
 }
 
-export function Logo({ size = 'text-[19px]', withMark = true }: { size?: string; withMark?: boolean }) {
+export function Logo({ size = 'text-[19px]', withStripes = false }: { size?: string; withStripes?: boolean }) {
+  const wordmark = (
+    <span className={cx('inline-flex items-baseline gap-[1px] font-extrabold tracking-[-.01em]', size)}>
+      <span className="text-ink">Senaryo</span>
+      <span className="font-normal text-ink-soft">topia</span>
+    </span>
+  );
+  if (!withStripes) {
+    return <span className="inline-flex items-center select-none">{wordmark}</span>;
+  }
   return (
-    <span className="inline-flex items-center gap-2 select-none">
-      {withMark ? <LogoMark size={size === 'text-[15px]' ? 20 : 24} /> : null}
-      <span className={cx('inline-flex items-baseline gap-[1px] font-extrabold tracking-[-.01em]', size)}>
-        <span className="text-ink">Scenario</span>
-        <span className="font-normal text-ink-soft">topia</span>
-      </span>
+    <span className="inline-flex flex-col items-start gap-2 select-none">
+      {wordmark}
+      <LogoStripes barHeight={size === 'text-[15px]' ? 9 : 12} />
+    </span>
+  );
+}
+
+/**
+ * CategoryStripe — the "which of the six categories is this" indicator used
+ * on course/event cards: the item's own color is lit, the other five stay
+ * passive gray, echoing the logo's stripe motif at content-card scale.
+ */
+export function CategoryStripe({ activeIndex, barHeight = 8 }: { activeIndex: number; barHeight?: number }) {
+  return (
+    <span className="inline-flex items-center gap-[3px]" aria-hidden="true">
+      {CATEGORY_COLORS.map((color, i) => (
+        <span
+          key={i}
+          className="rounded-[2px] shrink-0"
+          style={{
+            width: barHeight * 0.4,
+            height: barHeight,
+            background: i === activeIndex ? color : 'var(--line)',
+            transform: 'skewX(-16deg)',
+          }}
+        />
+      ))}
     </span>
   );
 }

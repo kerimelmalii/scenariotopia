@@ -192,3 +192,60 @@ export function IconCloud(p: IconProps) {
     </IconBase>
   );
 }
+export function IconWifiOff(p: IconProps) {
+  return (
+    <IconBase {...p}>
+      <path d="M2 2l20 20" />
+      <path d="M8.5 16.5a5 5 0 017 0" />
+      <path d="M5 13a10 10 0 015.5-2.8" />
+      <path d="M19 13a10 10 0 00-3-2.2" />
+      <path d="M2 8.5a15 15 0 014.2-2.8" />
+      <path d="M22 8.5a15 15 0 00-7-3.9" />
+      <path d="M12 20h.01" />
+    </IconBase>
+  );
+}
+export function IconTv(p: IconProps) {
+  return (
+    <IconBase {...p}>
+      <rect x={3} y={6} width={18} height={13} rx={2} />
+      <path d="M8 3l4 3 4-3" />
+    </IconBase>
+  );
+}
+export function IconTheater(p: IconProps) {
+  return (
+    <IconBase {...p}>
+      <path d="M4 4l7 4-7 4V4z" />
+      <path d="M20 4l-7 4 7 4V4z" />
+      <path d="M6 12v3a6 6 0 0012 0v-3" />
+      <path d="M9 20h6" />
+    </IconBase>
+  );
+}
+export function IconCalendar(p: IconProps) {
+  return (
+    <IconBase {...p}>
+      <rect x={3} y={5} width={18} height={16} rx={2} />
+      <path d="M8 3v4M16 3v4M3 10h18" />
+    </IconBase>
+  );
+}
+export function IconTrophy(p: IconProps) {
+  return (
+    <IconBase {...p}>
+      <path d="M8 4h8v5a4 4 0 01-8 0V4z" />
+      <path d="M8 5H5a3 3 0 003 4M16 5h3a3 3 0 01-3 4" />
+      <path d="M12 13v3M9 20h6M10 16h4v4h-4z" />
+    </IconBase>
+  );
+}
+export function IconMic(p: IconProps) {
+  return (
+    <IconBase {...p}>
+      <rect x={9} y={2} width={6} height={12} rx={3} />
+      <path d="M5 10a7 7 0 0014 0" />
+      <path d="M12 17v4M9 21h6" />
+    </IconBase>
+  );
+}
