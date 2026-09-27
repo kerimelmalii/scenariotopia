@@ -191,11 +191,19 @@ export function LogoStripes({ barHeight = 10 }: { barHeight?: number }) {
   );
 }
 
-export function Logo({ size = 'text-[19px]', withStripes = false }: { size?: string; withStripes?: boolean }) {
+export function Logo({
+  size = 'text-[19px]',
+  withStripes = false,
+  dark = false,
+}: {
+  size?: string;
+  withStripes?: boolean;
+  dark?: boolean;
+}) {
   const wordmark = (
     <span className={cx('inline-flex items-baseline gap-[1px] font-extrabold tracking-[-.01em]', size)}>
-      <span className="text-ink">Scenario</span>
-      <span className="font-normal text-ink-soft">topia</span>
+      <span className={dark ? 'text-hero-ink' : 'text-ink'}>Scenario</span>
+      <span className={cx('font-normal', dark ? 'text-hero-ink-soft' : 'text-ink-soft')}>topia</span>
     </span>
   );
   if (!withStripes) {

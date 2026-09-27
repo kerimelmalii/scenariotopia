@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react';
 import { NEWSLETTER } from '../../data/content';
 import { PrimaryButton, Slugline } from '../ui/primitives';
+import { Reveal } from '../ui/Reveal';
 import { IconCheck } from '../icons/icons';
 
 export function Newsletter() {
@@ -16,9 +17,11 @@ export function Newsletter() {
   return (
     <section className="border-t border-line-soft">
       <div className="max-w-[640px] mx-auto px-6 sm:px-8 py-20 text-center">
-        <Slugline>{NEWSLETTER.kicker}</Slugline>
-        <h3 className="mt-4 text-[26px] sm:text-[32px] font-bold tracking-[-.02em] balance">{NEWSLETTER.title}</h3>
-        <p className="mt-4 text-[15px] text-ink-soft leading-relaxed">{NEWSLETTER.desc}</p>
+        <Reveal>
+          <Slugline>{NEWSLETTER.kicker}</Slugline>
+          <h3 className="font-display mt-4 text-[26px] sm:text-[32px] balance">{NEWSLETTER.title}</h3>
+          <p className="mt-4 text-[15px] text-ink-soft leading-relaxed">{NEWSLETTER.desc}</p>
+        </Reveal>
         {submitted ? (
           <div className="mt-7 inline-flex items-center gap-2 text-[14px] font-semibold text-ink">
             <IconCheck size={16} className="text-c-green" /> Kaydedildi — teşekkürler!

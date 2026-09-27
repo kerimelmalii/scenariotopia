@@ -21,10 +21,16 @@ export default {
         'c-blue': 'var(--c-blue)',
         'c-turquoise': 'var(--c-turquoise)',
         'c-green': 'var(--c-green)',
+        'hero-bg': 'var(--hero-bg)',
+        'hero-bg-2': 'var(--hero-bg-2)',
+        'hero-ink': 'var(--hero-ink)',
+        'hero-ink-soft': 'var(--hero-ink-soft)',
+        'hero-line': 'var(--hero-line)',
       },
       fontFamily: {
         sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
         script: ['"Courier Prime"', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
+        display: ['"Playfair Display"', 'ui-serif', 'Georgia', 'serif'],
       },
       keyframes: {
         fadeUp: {
