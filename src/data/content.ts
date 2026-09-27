@@ -61,7 +61,7 @@ export interface FormatType {
 export const FORMAT_INTRO = {
   kicker: 'Format seçebilme',
   title: 'Her Format, Tek Uygulama.',
-  desc: 'Ne yazdığını seç, Senaryotopia sektörün beklediği biçimlendirmeyi senin için uygulasın.',
+  desc: 'Ne yazdığını seç, Scenariotopia sektörün beklediği biçimlendirmeyi senin için uygulasın.',
 };
 
 export const FORMAT_TYPES: readonly FormatType[] = [
@@ -159,7 +159,7 @@ export interface AcademyCourse {
 }
 
 export const ACADEMY_INTRO = {
-  kicker: 'Senaryotopia Akademi',
+  kicker: 'Scenariotopia Akademi',
   title: 'Yazarken öğren, öğrenirken yaz.',
   desc: 'Kısa dersler ve gerçek senaryo örnekleriyle zanaatını geliştir. Kaydolan her yazar Akademi\'ye erişebilir.',
 };
@@ -247,7 +247,7 @@ export const EVENTS: readonly WritingEvent[] = [
   {
     categoryIndex: 0,
     icon: IconTrophy,
-    title: 'Senaryotopia Kısa Film Yarışması 2026',
+    title: 'Scenariotopia Kısa Film Yarışması 2026',
     format: 'Başvuru Açık',
     when: 'Son başvuru: 30 Kasım 2026',
     desc: 'Kazanan senaryo Akademi\'de yayınlanır ve bir prodüksiyon ekibiyle buluşturulur.',
@@ -303,7 +303,7 @@ export const PRICING_PLANS: readonly PricingPlan[] = [
       'Misafir\'deki her şey',
       'Karakter matrisi (Want/Need)',
       'Dramatik yapı şablonları',
-      'Senaryotopia Akademi erişimi',
+      'Scenariotopia Akademi erişimi',
       'Fikir Sandığı ve yazım hedefleri',
     ],
     featured: true,

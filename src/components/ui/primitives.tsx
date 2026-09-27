@@ -194,7 +194,7 @@ export function LogoStripes({ barHeight = 10 }: { barHeight?: number }) {
 export function Logo({ size = 'text-[19px]', withStripes = false }: { size?: string; withStripes?: boolean }) {
   const wordmark = (
     <span className={cx('inline-flex items-baseline gap-[1px] font-extrabold tracking-[-.01em]', size)}>
-      <span className="text-ink">Senaryo</span>
+      <span className="text-ink">Scenario</span>
       <span className="font-normal text-ink-soft">topia</span>
     </span>
   );
