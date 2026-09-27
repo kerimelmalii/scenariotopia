@@ -1,10 +1,10 @@
-# Senaryotopia
+# Scenariotopia
 
 Cebindeki senaryo ofisi — ekran yazarları için şık, premium ve mobil-öncelikli bir senaryo yazım uygulaması prototipi.
 
 ## Nedir?
 
-Senaryotopia, senaryo yazarlarının format kurallarıyla boğuşmadan, her yerde (evde, otobüste, sette) yazabilmesi için tasarlanmış bir konsept ürün. Tasarım dili, senaryo formatının kendisinden (slugline etiketler, Courier Prime, sahne numaraları) ilham alır — jenerik bir SaaS şablonu değil, yazarlık zanaatına özgü bir kimlik hedefler. Marka kimliği, logodaki altı renkli çizgi motifinden türeyen bir "kategori rengi" sistemine dayanır: her kurs, etkinlik ve özellik kartı bu altı renkten birini taşır.
+Scenariotopia, senaryo yazarlarının format kurallarıyla boğuşmadan, her yerde (evde, otobüste, sette) yazabilmesi için tasarlanmış bir konsept ürün. Tasarım dili büyük ölçüde monokrom (siyah/beyaz/gri): renk sadece logodaki altı renkli çizgi motifinden türeyen "kategori rengi" sisteminde, yalnızca Akademi'nin kurs ve etkinlik kartlarında kullanılır. Geri kalan her yer düz, sade ve premium kalır.
 
 ## Sayfalar
 

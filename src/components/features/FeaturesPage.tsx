@@ -20,7 +20,7 @@ export function FeaturesPage({ onAuth, onStartWriting, onLogo, onNav }: PublicPa
             her adımı için bir araç.
           </>
         }
-        desc="Senaryotopia, fikirden final taslağa kadar tüm süreci cebine sığdırır."
+        desc="Scenariotopia, fikirden final taslağa kadar tüm süreci cebine sığdırır."
       />
 
       <section className="max-w-[1120px] mx-auto px-6 sm:px-8">
