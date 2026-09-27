@@ -1,9 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
 import type { AuthMode, DailyGoal, NewProjectInput, Project, ProjectPatch, QuickNote, View } from './types';
 import { makeProject, sampleProjects, uid } from './data/seed';
-import type { NavSection } from './components/ui/SiteHeader';
+import type { PublicPage } from './components/ui/SiteHeader';
 import { LandingPage } from './components/landing/LandingPage';
 import { FeaturesPage } from './components/features/FeaturesPage';
+import { FormatPage } from './components/format/FormatPage';
+import { AcademyPage } from './components/academy/AcademyPage';
+import { PricingPage } from './components/pricing/PricingPage';
 import { Dashboard } from './components/dashboard/Dashboard';
 import { Workspace } from './components/workspace/Workspace';
 import { NewProjectModal } from './components/NewProjectModal';
@@ -18,6 +21,13 @@ interface AuthModalState {
 
 const CLOSED_AUTH: AuthModalState = { open: false, mode: 'login', reason: null, intent: 'header' };
 
+const PUBLIC_PAGE_VIEW: Record<PublicPage, View> = {
+  ozellikler: 'features',
+  format: 'format',
+  akademi: 'akademi',
+  fiyat: 'fiyat',
+};
+
 export default function App() {
   const [view, setView] = useState<View>('landing');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -28,35 +38,13 @@ export default function App() {
   const [dailyGoal, setDailyGoal] = useState<DailyGoal | null>(null);
   const [showNewProject, setShowNewProject] = useState(false);
   const [authModal, setAuthModal] = useState<AuthModalState>(CLOSED_AUTH);
-  const [pendingAnchor, setPendingAnchor] = useState<NavSection | null>(null);
 
   const goToLanding = useCallback(() => setView('landing'), []);
-
-  const navigateSection = useCallback(
-    (key: NavSection) => {
-      if (key === 'ozellikler') {
-        setView('features');
-        return;
-      }
-      if (view !== 'landing') {
-        setPendingAnchor(key);
-        setView('landing');
-        return;
-      }
-      document.getElementById(key)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    },
-    [view],
-  );
+  const navigateToPage = useCallback((page: PublicPage) => setView(PUBLIC_PAGE_VIEW[page]), []);
 
   useEffect(() => {
-    if (view === 'landing' && pendingAnchor) {
-      const key = pendingAnchor;
-      setPendingAnchor(null);
-      requestAnimationFrame(() => {
-        document.getElementById(key)?.scrollIntoView({ block: 'start' });
-      });
-    }
-  }, [view, pendingAnchor]);
+    window.scrollTo(0, 0);
+  }, [view]);
 
   function openAuth(mode: AuthMode, reason?: string | null, intent: 'header' | 'unlock' = 'header') {
     setAuthModal({ open: true, mode, reason: reason || null, intent });
@@ -106,15 +94,20 @@ export default function App() {
     document.body.style.background = 'var(--bg)';
   }, []);
 
+  const publicPageProps = {
+    onAuth: (mode: AuthMode) => openAuth(mode, null, 'header'),
+    onStartWriting: openNewProject,
+    onLogo: goToLanding,
+    onNav: navigateToPage,
+  };
+
   return (
     <>
-      {view === 'landing' ? (
-        <LandingPage onAuth={(mode) => openAuth(mode, null, 'header')} onStartWriting={openNewProject} onLogo={goToLanding} onNav={navigateSection} />
-      ) : null}
-
-      {view === 'features' ? (
-        <FeaturesPage onAuth={(mode) => openAuth(mode, null, 'header')} onStartWriting={openNewProject} onLogo={goToLanding} onNav={navigateSection} />
-      ) : null}
+      {view === 'landing' ? <LandingPage {...publicPageProps} /> : null}
+      {view === 'features' ? <FeaturesPage {...publicPageProps} /> : null}
+      {view === 'format' ? <FormatPage {...publicPageProps} /> : null}
+      {view === 'akademi' ? <AcademyPage {...publicPageProps} /> : null}
+      {view === 'fiyat' ? <PricingPage {...publicPageProps} /> : null}
 
       {view === 'dashboard' ? (
         <Dashboard

@@ -15,6 +15,12 @@ export default {
         'accent-2': 'var(--accent-2)',
         'accent-ink': 'var(--accent-ink)',
         'accent-wash': 'var(--accent-wash)',
+        'c-bordo': 'var(--c-bordo)',
+        'c-coral': 'var(--c-coral)',
+        'c-purple': 'var(--c-purple)',
+        'c-blue': 'var(--c-blue)',
+        'c-turquoise': 'var(--c-turquoise)',
+        'c-green': 'var(--c-green)',
       },
       fontFamily: {
         sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],

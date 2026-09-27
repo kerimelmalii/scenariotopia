@@ -1,17 +1,20 @@
 import type { FeatureHighlight } from '../../data/content';
+import { CATEGORY_COLORS } from '../ui/primitives';
 
-export function FeatureHighlightCard({ feature, index, onClick }: { feature: FeatureHighlight; index: number; onClick: () => void }) {
+export function FeatureHighlightCard({ feature, onClick }: { feature: FeatureHighlight; onClick: () => void }) {
   const Icon = feature.icon;
+  const color = CATEGORY_COLORS[feature.categoryIndex];
   return (
     <button
       onClick={onClick}
-      className="group text-left rounded-[4px] border border-line bg-white p-7 hover:-translate-y-[2px] hover:border-ink/20 hover:shadow-[0_18px_38px_-20px_rgba(29,29,31,.25)] transition-all duration-200"
+      className="group text-left rounded-[4px] border border-line bg-white p-7 hover:-translate-y-[2px] hover:shadow-[0_18px_38px_-20px_rgba(10,10,10,.22)] transition-all duration-200"
+      style={{ borderTopColor: color, borderTopWidth: 3 }}
     >
-      <div className="flex items-start justify-between mb-6">
-        <span className="font-script text-[13px] font-bold text-ink-faint group-hover:text-accent-ink transition-colors">
-          {String(index + 1).padStart(2, '0')}
+      <div className="flex items-center justify-between mb-6">
+        <span className="font-script text-[11px] font-bold uppercase tracking-[.08em]" style={{ color }}>
+          {feature.eyebrow}
         </span>
-        <span className="text-accent-ink">
+        <span style={{ color }}>
           <Icon size={18} strokeWidth={1.6} />
         </span>
       </div>

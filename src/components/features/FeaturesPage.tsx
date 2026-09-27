@@ -1,47 +1,39 @@
-import type { AuthMode } from '../../types';
-import { FEATURE_DETAILS } from '../../data/content';
-import { PrimaryButton, Slugline } from '../ui/primitives';
-import { SiteHeader, SiteFooter, type NavSection } from '../ui/SiteHeader';
+import type { PublicPageProps } from '../ui/SiteHeader';
+import { SiteHeader, SiteFooter } from '../ui/SiteHeader';
+import { PageHero } from '../ui/PageHero';
+import { PrimaryButton } from '../ui/primitives';
+import { FEATURES_INTRO, FEATURE_DETAILS } from '../../data/content';
 import { IconArrowRight } from '../icons/icons';
 import { FeatureRow, PaperVisual } from '../landing/FeatureRow';
 
-interface FeaturesPageProps {
-  onAuth: (mode: AuthMode) => void;
-  onStartWriting: () => void;
-  onLogo: () => void;
-  onNav: (section: NavSection) => void;
-}
-
-export function FeaturesPage({ onAuth, onStartWriting, onLogo, onNav }: FeaturesPageProps) {
+export function FeaturesPage({ onAuth, onStartWriting, onLogo, onNav }: PublicPageProps) {
   return (
     <div className="min-h-screen bg-bg">
-      <SiteHeader activeSection="ozellikler" onLogo={onLogo} onNav={onNav} onAuth={onAuth} />
+      <SiteHeader activePage="ozellikler" onLogo={onLogo} onNav={onNav} onAuth={onAuth} />
 
-      <section className="pt-16 sm:pt-20 pb-8">
-        <div className="max-w-[1120px] mx-auto px-6 sm:px-8 text-center">
-          <div className="reveal">
-            <Slugline>Özellikler</Slugline>
-          </div>
-          <h1
-            className="reveal balance mt-5 text-[36px] sm:text-[52px] font-extrabold tracking-[-.03em] leading-[1.05] text-ink"
-            style={{ animationDelay: '.05s' }}
-          >
+      <PageHero
+        kicker={FEATURES_INTRO.kicker}
+        title={
+          <>
             Yazma sürecinin
             <br />
             her adımı için bir araç.
-          </h1>
-          <p
-            className="reveal balance mt-6 text-[16px] sm:text-[18px] text-ink-soft max-w-[560px] mx-auto leading-relaxed"
-            style={{ animationDelay: '.1s' }}
-          >
-            Scenariotopia, fikirden final taslağa kadar tüm süreci cebine sığdırır.
-          </p>
-        </div>
-      </section>
+          </>
+        }
+        desc="Senaryotopia, fikirden final taslağa kadar tüm süreci cebine sığdırır."
+      />
 
       <section className="max-w-[1120px] mx-auto px-6 sm:px-8">
-        {FEATURE_DETAILS.map((f) => (
-          <FeatureRow key={f.title} reverse={f.reverse} kicker={f.kicker} title={f.title} desc={f.desc} visual={<PaperVisual icon={f.icon} />} />
+        {FEATURE_DETAILS.map((f, i) => (
+          <FeatureRow
+            key={f.title}
+            index={i}
+            reverse={f.reverse}
+            categoryIndex={f.categoryIndex}
+            title={f.title}
+            desc={f.desc}
+            visual={<PaperVisual icon={f.icon} categoryIndex={f.categoryIndex} />}
+          />
         ))}
       </section>
 

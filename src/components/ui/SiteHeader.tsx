@@ -3,22 +3,30 @@ import { Logo, PrimaryButton, TextButton } from './primitives';
 import { cx } from '../../utils/cx';
 import { IconHeart } from '../icons/icons';
 
-export type NavSection = 'akademi' | 'ozellikler' | 'fiyat';
+export type PublicPage = 'ozellikler' | 'format' | 'akademi' | 'fiyat';
 
-const NAV_LINKS: ReadonlyArray<readonly [string, NavSection]> = [
-  ['Akademi', 'akademi'],
+export interface PublicPageProps {
+  onAuth: (mode: AuthMode) => void;
+  onStartWriting: () => void;
+  onLogo: () => void;
+  onNav: (page: PublicPage) => void;
+}
+
+const NAV_LINKS: ReadonlyArray<readonly [string, PublicPage]> = [
   ['Özellikler', 'ozellikler'],
+  ['Format', 'format'],
+  ['Akademi', 'akademi'],
   ['Fiyatlandırma', 'fiyat'],
 ];
 
 interface SiteHeaderProps {
-  activeSection: NavSection | null;
+  activePage: PublicPage | null;
   onLogo: () => void;
-  onNav: (section: NavSection) => void;
+  onNav: (page: PublicPage) => void;
   onAuth: (mode: AuthMode) => void;
 }
 
-export function SiteHeader({ activeSection, onLogo, onNav, onAuth }: SiteHeaderProps) {
+export function SiteHeader({ activePage, onLogo, onNav, onAuth }: SiteHeaderProps) {
   return (
     <header className="sticky top-0 z-40 glass border-b border-line-soft">
       <div className="max-w-[1120px] mx-auto px-6 sm:px-8 h-16 flex items-center justify-between">
@@ -27,7 +35,7 @@ export function SiteHeader({ activeSection, onLogo, onNav, onAuth }: SiteHeaderP
         </button>
         <nav className="hidden md:flex items-center gap-7">
           {NAV_LINKS.map(([label, key]) => {
-            const isActive = activeSection === key;
+            const isActive = activePage === key;
             return (
               <button
                 key={key}
@@ -56,10 +64,10 @@ export function SiteHeader({ activeSection, onLogo, onNav, onAuth }: SiteHeaderP
 export function SiteFooter() {
   return (
     <footer className="border-t border-line-soft">
-      <div className="max-w-[1120px] mx-auto px-6 sm:px-8 py-10 flex flex-col sm:flex-row items-center justify-between gap-4">
-        <Logo size="text-[15px]" />
+      <div className="max-w-[1120px] mx-auto px-6 sm:px-8 py-12 flex flex-col sm:flex-row items-end sm:items-center justify-between gap-6">
+        <Logo size="text-[15px]" withStripes />
         <p className="text-[13px] text-ink-faint flex items-center gap-1.5">
-          Yazarlar için, <IconHeart size={12} className="text-accent" /> ile.
+          Yazarlar için, <IconHeart size={12} className="text-c-coral" /> ile.
         </p>
       </div>
     </footer>
