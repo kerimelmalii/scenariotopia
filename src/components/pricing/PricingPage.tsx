@@ -2,6 +2,7 @@ import type { PublicPageProps } from '../ui/SiteHeader';
 import { SiteHeader, SiteFooter } from '../ui/SiteHeader';
 import { PageHero } from '../ui/PageHero';
 import { Accordion, type AccordionItem } from '../ui/Accordion';
+import { Reveal, RevealGroup, RevealItem } from '../ui/Reveal';
 import { PRICING_INTRO, PRICING_PLANS } from '../../data/content';
 import { PricingPlanCard } from './PricingPlanCard';
 
@@ -28,17 +29,21 @@ export function PricingPage({ onAuth, onStartWriting, onLogo, onNav }: PublicPag
       <PageHero kicker={PRICING_INTRO.kicker} title={PRICING_INTRO.title} />
 
       <section className="max-w-[1120px] mx-auto px-6 sm:px-8 py-12">
-        <div className="grid sm:grid-cols-2 gap-6 max-w-[720px] mx-auto">
+        <RevealGroup className="grid sm:grid-cols-2 gap-6 max-w-[720px] mx-auto">
           {PRICING_PLANS.map((plan) => (
-            <PricingPlanCard key={plan.key} plan={plan} onPrimaryAction={plan.featured ? () => onAuth('signup') : onStartWriting} />
+            <RevealItem key={plan.key}>
+              <PricingPlanCard plan={plan} onPrimaryAction={plan.featured ? () => onAuth('signup') : onStartWriting} />
+            </RevealItem>
           ))}
-        </div>
+        </RevealGroup>
       </section>
 
       <section className="border-t border-line-soft">
         <div className="max-w-[640px] mx-auto px-6 sm:px-8 py-16 md:py-20">
-          <h3 className="text-[22px] font-bold tracking-[-.01em] mb-4 text-center">Sık sorulan sorular</h3>
-          <Accordion items={FAQ} />
+          <Reveal>
+            <h3 className="font-display text-[22px] mb-4 text-center">Sık sorulan sorular</h3>
+            <Accordion items={FAQ} />
+          </Reveal>
         </div>
       </section>
 
